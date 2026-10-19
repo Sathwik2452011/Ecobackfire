@@ -1,0 +1,193 @@
+{
+  "check_suite_version": "1.0.0",
+  "checks": [
+    {
+      "check_id": "V1_closed_form_vs_numeric",
+      "details": {},
+      "family": "closed_form",
+      "required": true,
+      "status": "not_applicable",
+      "summary": "no break-even search in this experiment",
+      "tolerance_used": null
+    },
+    {
+      "check_id": "V2_independent_decimal_recompute",
+      "details": {
+        "max_relative_error": 3.2225139396608686e-16,
+        "mismatches": []
+      },
+      "family": "independent_recomputation",
+      "required": true,
+      "status": "passed",
+      "summary": "production matches 60-digit Decimal reference (25 comparisons, 0 reference roots)",
+      "tolerance_used": "rtol=1e-09"
+    },
+    {
+      "check_id": "V3_invariants",
+      "details": {
+        "violations": []
+      },
+      "family": "invariants",
+      "required": true,
+      "status": "passed",
+      "summary": "all invariants hold",
+      "tolerance_used": "rtol 1e-12..1e-9"
+    },
+    {
+      "check_id": "V4_known_answer_benchmarks",
+      "details": {
+        "cases": [
+          "B-001",
+          "B-002",
+          "B-003",
+          "B-004",
+          "B-005",
+          "B-006",
+          "B-007",
+          "B-008",
+          "P-001",
+          "P-002",
+          "P-003",
+          "P-004",
+          "P-005"
+        ],
+        "failures": []
+      },
+      "family": "benchmarks",
+      "required": true,
+      "status": "passed",
+      "summary": "13 known-answer cases reproduced",
+      "tolerance_used": "per-case rtol (1e-9 roots, 1e-12 pointwise)"
+    },
+    {
+      "check_id": "F1_threshold_perturbation",
+      "details": {},
+      "family": "falsification_perturbation",
+      "required": true,
+      "status": "not_applicable",
+      "summary": "no break-even search in this experiment",
+      "tolerance_used": null
+    },
+    {
+      "check_id": "F2_counterexample_search",
+      "details": {},
+      "family": "falsification_counterexample",
+      "required": true,
+      "status": "not_applicable",
+      "summary": "no break-even search in this experiment",
+      "tolerance_used": null
+    },
+    {
+      "check_id": "F3_alternative_demand_form",
+      "details": {},
+      "family": "model_form",
+      "required": true,
+      "status": "not_applicable",
+      "summary": "no break-even search in this experiment",
+      "tolerance_used": null
+    },
+    {
+      "check_id": "F4_boundary_variation",
+      "details": {},
+      "family": "boundary",
+      "required": true,
+      "status": "not_applicable",
+      "summary": "no break-even search in this experiment",
+      "tolerance_used": null
+    },
+    {
+      "check_id": "F5_parameter_uncertainty_corners",
+      "details": {},
+      "family": "parameter_uncertainty",
+      "required": true,
+      "status": "not_applicable",
+      "summary": "no break-even search in this experiment",
+      "tolerance_used": null
+    },
+    {
+      "check_id": "F6_extreme_and_invalid_inputs",
+      "details": {
+        "cases": [
+          "eta=0",
+          "eta->1",
+          "eta=1 (invalid)",
+          "eta<0 (invalid)",
+          "phi tiny",
+          "phi=0 (invalid)",
+          "phi>1 (invalid)",
+          "epsilon<0 (invalid)",
+          "epsilon=0",
+          "epsilon huge",
+          "L=0 (invalid)",
+          "L tiny",
+          "E0=0 (invalid)",
+          "E0 tiny",
+          "f=0",
+          "f<0 (invalid)",
+          "EM<0 (invalid)",
+          "NaN input",
+          "inf input"
+        ],
+        "problems": []
+      },
+      "family": "edge",
+      "required": true,
+      "status": "passed",
+      "summary": "19 extreme/invalid input cases behave as specified (finite result or typed error)",
+      "tolerance_used": null
+    },
+    {
+      "check_id": "F8_numerical_stability",
+      "details": {},
+      "family": "stability",
+      "required": true,
+      "status": "not_applicable",
+      "summary": "no break-even search in this experiment",
+      "tolerance_used": null
+    },
+    {
+      "check_id": "F7_evidence_quality_gate",
+      "details": {
+        "illustrative_inputs": [
+          "E0",
+          "EM0",
+          "EM1",
+          "L",
+          "epsilon",
+          "eta",
+          "f",
+          "phi",
+          "s_max"
+        ],
+        "inputs_with_unknown_uncertainty": [],
+        "weakest_provenance": "illustrative"
+      },
+      "family": "evidence_gate",
+      "required": true,
+      "status": "limits_claim",
+      "summary": "inputs are illustrative and/or lack characterized uncertainty: the result demonstrates the method and cannot be a real-world conclusion",
+      "tolerance_used": null
+    }
+  ],
+  "claim": null,
+  "config_sha256": "cd85ea318b44c755d0f1a53ff45465b67cc3926d1db0b270d1161aa8033fced3",
+  "experiment_id": "e1_compare",
+  "failed_attempts_to_falsify": [
+    "F6_extreme_and_invalid_inputs: 19 extreme/invalid input cases behave as specified (finite result or typed error)"
+  ],
+  "label_justification": [
+    "No candidate finding exists (no break-even/reversal was found or none was requested)."
+  ],
+  "profile": "pointwise",
+  "recommended_label": "not_applicable",
+  "schema_version": "1.0.0",
+  "successful_falsifications": [
+    "F7_evidence_quality_gate: inputs are illustrative and/or lack characterized uncertainty: the result demonstrates the method and cannot be a real-world conclusion"
+  ],
+  "unresolved_uncertainties": [
+    "Prior-art review has not been performed (prior_art_status = not_reviewed): no novelty claim is made.",
+    "Model-form adequacy against real data has not been assessed; constant-elasticity demand is an assumption.",
+    "Indirect/economy-wide rebound, grid dynamics, maintenance and end-of-life emissions are excluded.",
+    "Every input is an illustrative placeholder: no real-world evidence has been integrated."
+  ]
+}

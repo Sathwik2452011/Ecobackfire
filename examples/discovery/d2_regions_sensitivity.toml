@@ -1,0 +1,139 @@
+# Discovery spec D2: 2-D reversal regions and seeded sensitivity screening over the E2 illustrative inputs.
+# ALL INPUT VALUES AND ALL RANGES ARE ILLUSTRATIVE — not evidence. No real product is represented.
+# The seed is explicit and required: this spec is reproducible bit-for-bit for a given scipy version.
+
+schema_version = "1.0.0"
+discovery_id = "d2_rebound_regions_sensitivity"
+title = "D2: reversal regions and sensitivity screening for the efficiency-rebound model (illustrative inputs)"
+research_question = """In which regions of the input space does the efficiency intervention stop reducing absolute annual emissions, how close is the base case to that boundary, and which inputs move the break-even elasticity most?"""
+model_ref = "efficiency_rebound@1.0.0"
+decision_metric_ref = "delta_emissions_beneficial"
+
+[options]
+boundary_variant = "B1"
+demand_form = "constant_elasticity"
+
+# Region 1: energy-cost share (phi) x demand elasticity (epsilon). Expected to contain a reversal boundary.
+[[regions]]
+[regions.x]
+variable_id = "phi"
+low = 0.5
+high = 1.0
+grid_points = 41
+provenance_class = "illustrative"
+basis = "ILLUSTRATIVE — not evidence: demonstration range for the energy share of marginal cost"
+[regions.y]
+variable_id = "epsilon"
+low = 0.0
+high = 3.0
+grid_points = 81
+provenance_class = "illustrative"
+basis = "ILLUSTRATIVE — not evidence: demonstration range for the demand elasticity"
+
+# Region 2: efficiency gain (eta) x intervention embodied emissions (EM1), ranges from the binding intervals.
+# Expected to show NO reversal at the base elasticity, so it is recorded as a rejected candidate.
+[[regions]]
+[regions.x]
+variable_id = "eta"
+grid_points = 21
+basis = "binding interval (illustrative)"
+[regions.y]
+variable_id = "EM1"
+grid_points = 21
+basis = "binding interval (illustrative)"
+
+[sensitivity]
+seed = 12345
+n_samples_log2 = 8
+[sensitivity.target]
+variable_id = "epsilon"
+low = 0.0
+high = 3.0
+grid_points = 101
+provenance_class = "illustrative"
+basis = "ILLUSTRATIVE — not evidence: demonstration search range for the break-even elasticity"
+[[sensitivity.parameters]]
+variable_id = "phi"
+basis = "binding interval (illustrative)"
+[[sensitivity.parameters]]
+variable_id = "EM1"
+basis = "binding interval (illustrative)"
+[[sensitivity.parameters]]
+variable_id = "EM0"
+basis = "binding interval (illustrative)"
+[[sensitivity.parameters]]
+variable_id = "f"
+basis = "binding interval (illustrative)"
+[[sensitivity.parameters]]
+variable_id = "L"
+basis = "binding interval (illustrative)"
+[[sensitivity.parameters]]
+variable_id = "E0"
+basis = "binding interval (illustrative)"
+[[sensitivity.parameters]]
+variable_id = "eta"
+basis = "binding interval (illustrative)"
+
+[bindings.E0]
+value = 3000.0
+unit = "kWh/yr"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 2000.0, high = 4500.0 }
+
+[bindings.eta]
+value = 0.30
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 0.2, high = 0.4 }
+
+[bindings.phi]
+value = 0.80
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 0.5, high = 1.0 }
+
+[bindings.epsilon]
+value = 0.5
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 0.0, high = 1.5 }
+
+[bindings.f]
+value = 0.40
+unit = "kgCO2e/kWh"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 0.1, high = 0.8 }
+
+[bindings.EM0]
+value = 1000.0
+unit = "kgCO2e"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 500.0, high = 1500.0 }
+
+[bindings.EM1]
+value = 1720.0
+unit = "kgCO2e"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 1000.0, high = 2500.0 }
+
+[bindings.L]
+value = 12.0
+unit = "yr"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 8.0, high = 16.0 }
+
+# s_max is used only by the alternative saturating demand form (falsification test F3).
+[bindings.s_max]
+value = 1.5
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 1.05, high = 3.0 }

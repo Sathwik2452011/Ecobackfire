@@ -1,0 +1,292 @@
+{
+  "changelog": "Initial import: 5 records for variable f (World, India, United States, Germany, France; year 2024) from upstream commit f8de88a4f6f9cab44f1cf606047cbd6c4414042c.",
+  "dataset_id": "owid-electricity-carbon-intensity",
+  "description": "Grid-average lifecycle greenhouse-gas intensity of electricity generation for the world and four countries in 2024, as published in the Our World in Data (OWID) 'Data on Energy' legacy dataset (variable carbon_intensity_elec). OWID's codebook attributes the variable to Ember's Yearly Electricity Data. Supplies the model input `f` only; it supplies nothing else the rebound model needs.",
+  "last_updated": "2026-10-15",
+  "license": {
+    "identifier": "CC-BY-4.0",
+    "redistribution_allowed": null,
+    "text": "OWID states that data it produces is open access under Creative Commons BY and that data produced by third parties is subject to the original authors' license terms; the original (Ember) terms were not checked here.",
+    "url": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  "metadata": {
+    "import_spec_sha256": "358006a0352a10bf10d4c4cf26bf43768ba4abeea877cf7f58491104f3834c02",
+    "importer_version": "1",
+    "raw_excerpt_method": "verbatim header + selected lines; see data/raw/owid-electricity-carbon-intensity/1.0.0/extract_excerpt.py",
+    "row_selection_rule": "fixed list: World, India, United States, Germany, France; year 2024; chosen before any model run",
+    "uncertainty_in_source": "none provided",
+    "upstream_codebook_sha256": "3cc9b7db0d921496e2988568ce3aee5ed41f50431dd234a0663b5f0a4b2e32bb",
+    "upstream_commit": "f8de88a4f6f9cab44f1cf606047cbd6c4414042c",
+    "upstream_commit_date": "2026-10-01",
+    "upstream_data_file": "owid-energy-data.csv",
+    "upstream_data_file_sha256": "266f2e2baad7975351bc9bb4aa061d22b1da9fe4c47d51d2ac6071e01e171f76",
+    "upstream_repository": "https://github.com/owid/energy-data",
+    "upstream_status": "OWID labels this legacy release as no longer updated"
+  },
+  "methodology": "OWID codebook definition (verbatim from the pinned codebook row): 'Greenhouse gases emitted per unit of generated electricity, measured in grams of CO2 equivalents per kilowatt-hour.' Title: 'Lifecycle carbon intensity of electricity generation'. This is a grid-AVERAGE intensity per kWh GENERATED. EcoBackfire notes (not from the source): it is not a marginal factor, it is defined per generated rather than delivered kWh, and the source states no uncertainty. The rebound model's `f` is per kWh of final energy and requires the supplier to state average vs marginal.",
+  "missing_variables": [],
+  "parent_release": null,
+  "provider": "Our World in Data (compiler); underlying data: Ember (Yearly Electricity Data 2026; Yearly Electricity Data Europe 2026), as stated in the OWID codebook",
+  "quality": "provisional",
+  "raw_files": [
+    {
+      "note": "Verbatim lines (header + 5 data rows) of owid-energy-data.csv at upstream commit f8de88a4f6f9cab44f1cf606047cbd6c4414042c; full-file sha256 266f2e2baad7975351bc9bb4aa061d22b1da9fe4c47d51d2ac6071e01e171f76.",
+      "path": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv",
+      "retrieved_on": "2026-10-15",
+      "sha256": "d5f62505e6c56074e990c028d83e4bd26c0cafb56d8f6e03de28e4023433b357",
+      "source_id": "owid-energy-data-csv@f8de88a"
+    },
+    {
+      "note": "Verbatim header + the carbon_intensity_elec row of owid-energy-codebook.csv at the same commit; full-file sha256 3cc9b7db0d921496e2988568ce3aee5ed41f50431dd234a0663b5f0a4b2e32bb.",
+      "path": "owid-electricity-carbon-intensity/1.0.0/owid-energy-codebook.excerpt.csv",
+      "retrieved_on": "2026-10-15",
+      "sha256": "47c2d4a6fe3e0de2b8fccb5e287c4af48408dd5c12dd51ee0ab20661a233b9cb",
+      "source_id": "owid-energy-codebook-csv@f8de88a"
+    }
+  ],
+  "records": [
+    {
+      "derivation": null,
+      "derived_from": [],
+      "evidence": {
+        "description": "Lifecycle greenhouse-gas intensity of electricity generation (grid average), per kWh generated",
+        "note": "EcoBackfire applicability caveat (not from the source): the source defines this per kWh generated, whereas the model's f is per kWh of final energy delivered, so transmission and distribution losses are not represented; the source gives no uncertainty.",
+        "provenance_class": "sourced",
+        "record_id": "f.global.2024",
+        "review": null,
+        "schema_version": "1.0.0",
+        "scope": {
+          "geography": "World",
+          "period": "2024",
+          "system_description": "grid-average electricity generation; average (not marginal); applies only to electricity-consuming devices"
+        },
+        "source": {
+          "citation": "Our World in Data, 'Data on Energy' (legacy release), repository owid/energy-data, commit f8de88a4f6f9cab44f1cf606047cbd6c4414042c, file owid-energy-data.csv, column carbon_intensity_elec. Per the OWID codebook the underlying source is Ember, Yearly Electricity Data (2026) and Yearly Electricity Data Europe (2026), https://ember-energy.org/data/yearly-electricity-data/.",
+          "locator": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv line 2: country=World, year=2024, column carbon_intensity_elec",
+          "retrieved_on": "2026-10-15",
+          "source_id": "owid-energy-data@f8de88a",
+          "url": "https://github.com/owid/energy-data/tree/f8de88a4f6f9cab44f1cf606047cbd6c4414042c"
+        },
+        "uncertainty": {
+          "kind": "unknown"
+        },
+        "unit": "gCO2e/kWh",
+        "value": 471.08,
+        "variable_id": "f"
+      },
+      "geography_codes": [
+        "GLOBAL"
+      ],
+      "metadata": {
+        "import_spec_sha256": "358006a0352a10bf10d4c4cf26bf43768ba4abeea877cf7f58491104f3834c02",
+        "raw_column": "carbon_intensity_elec",
+        "raw_file": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv",
+        "raw_line": "2",
+        "raw_row_sha256": "a6d6b7da2da166488f2eb38ac062881456f0c747edcf7e555619023349fb90a5",
+        "raw_value_text": "471.080",
+        "transformations": "none: value is the decimal text '471.080' parsed to float64; unit 'gCO2e/kWh' declared by EcoBackfire to match the source codebook text 'grams of CO₂ equivalents per kilowatt-hour (gCO₂)'; no scaling, rounding, unit conversion or imputation"
+      },
+      "methodology": null,
+      "quality": null,
+      "temporal": {
+        "end": "2024",
+        "start": "2024"
+      }
+    },
+    {
+      "derivation": null,
+      "derived_from": [],
+      "evidence": {
+        "description": "Lifecycle greenhouse-gas intensity of electricity generation (grid average), per kWh generated",
+        "note": "EcoBackfire applicability caveat (not from the source): the source defines this per kWh generated, whereas the model's f is per kWh of final energy delivered, so transmission and distribution losses are not represented; the source gives no uncertainty.",
+        "provenance_class": "sourced",
+        "record_id": "f.in.2024",
+        "review": null,
+        "schema_version": "1.0.0",
+        "scope": {
+          "geography": "India",
+          "period": "2024",
+          "system_description": "grid-average electricity generation; average (not marginal); applies only to electricity-consuming devices"
+        },
+        "source": {
+          "citation": "Our World in Data, 'Data on Energy' (legacy release), repository owid/energy-data, commit f8de88a4f6f9cab44f1cf606047cbd6c4414042c, file owid-energy-data.csv, column carbon_intensity_elec. Per the OWID codebook the underlying source is Ember, Yearly Electricity Data (2026) and Yearly Electricity Data Europe (2026), https://ember-energy.org/data/yearly-electricity-data/.",
+          "locator": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv line 3: country=India, year=2024, column carbon_intensity_elec",
+          "retrieved_on": "2026-10-15",
+          "source_id": "owid-energy-data@f8de88a",
+          "url": "https://github.com/owid/energy-data/tree/f8de88a4f6f9cab44f1cf606047cbd6c4414042c"
+        },
+        "uncertainty": {
+          "kind": "unknown"
+        },
+        "unit": "gCO2e/kWh",
+        "value": 705.4,
+        "variable_id": "f"
+      },
+      "geography_codes": [
+        "IN"
+      ],
+      "metadata": {
+        "import_spec_sha256": "358006a0352a10bf10d4c4cf26bf43768ba4abeea877cf7f58491104f3834c02",
+        "raw_column": "carbon_intensity_elec",
+        "raw_file": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv",
+        "raw_line": "3",
+        "raw_row_sha256": "0096f1c40e685688639dc1f89b58042ef089800ef51786c9b9d510091cac950c",
+        "raw_value_text": "705.400",
+        "transformations": "none: value is the decimal text '705.400' parsed to float64; unit 'gCO2e/kWh' declared by EcoBackfire to match the source codebook text 'grams of CO₂ equivalents per kilowatt-hour (gCO₂)'; no scaling, rounding, unit conversion or imputation"
+      },
+      "methodology": null,
+      "quality": null,
+      "temporal": {
+        "end": "2024",
+        "start": "2024"
+      }
+    },
+    {
+      "derivation": null,
+      "derived_from": [],
+      "evidence": {
+        "description": "Lifecycle greenhouse-gas intensity of electricity generation (grid average), per kWh generated",
+        "note": "EcoBackfire applicability caveat (not from the source): the source defines this per kWh generated, whereas the model's f is per kWh of final energy delivered, so transmission and distribution losses are not represented; the source gives no uncertainty.",
+        "provenance_class": "sourced",
+        "record_id": "f.us.2024",
+        "review": null,
+        "schema_version": "1.0.0",
+        "scope": {
+          "geography": "United States",
+          "period": "2024",
+          "system_description": "grid-average electricity generation; average (not marginal); applies only to electricity-consuming devices"
+        },
+        "source": {
+          "citation": "Our World in Data, 'Data on Energy' (legacy release), repository owid/energy-data, commit f8de88a4f6f9cab44f1cf606047cbd6c4414042c, file owid-energy-data.csv, column carbon_intensity_elec. Per the OWID codebook the underlying source is Ember, Yearly Electricity Data (2026) and Yearly Electricity Data Europe (2026), https://ember-energy.org/data/yearly-electricity-data/.",
+          "locator": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv line 4: country=United States, year=2024, column carbon_intensity_elec",
+          "retrieved_on": "2026-10-15",
+          "source_id": "owid-energy-data@f8de88a",
+          "url": "https://github.com/owid/energy-data/tree/f8de88a4f6f9cab44f1cf606047cbd6c4414042c"
+        },
+        "uncertainty": {
+          "kind": "unknown"
+        },
+        "unit": "gCO2e/kWh",
+        "value": 383.78,
+        "variable_id": "f"
+      },
+      "geography_codes": [
+        "US"
+      ],
+      "metadata": {
+        "import_spec_sha256": "358006a0352a10bf10d4c4cf26bf43768ba4abeea877cf7f58491104f3834c02",
+        "raw_column": "carbon_intensity_elec",
+        "raw_file": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv",
+        "raw_line": "4",
+        "raw_row_sha256": "41e1d299367d91ff764088fb5a7586be348f640aa5675384aa7d964573f14629",
+        "raw_value_text": "383.780",
+        "transformations": "none: value is the decimal text '383.780' parsed to float64; unit 'gCO2e/kWh' declared by EcoBackfire to match the source codebook text 'grams of CO₂ equivalents per kilowatt-hour (gCO₂)'; no scaling, rounding, unit conversion or imputation"
+      },
+      "methodology": null,
+      "quality": null,
+      "temporal": {
+        "end": "2024",
+        "start": "2024"
+      }
+    },
+    {
+      "derivation": null,
+      "derived_from": [],
+      "evidence": {
+        "description": "Lifecycle greenhouse-gas intensity of electricity generation (grid average), per kWh generated",
+        "note": "EcoBackfire applicability caveat (not from the source): the source defines this per kWh generated, whereas the model's f is per kWh of final energy delivered, so transmission and distribution losses are not represented; the source gives no uncertainty.",
+        "provenance_class": "sourced",
+        "record_id": "f.de.2024",
+        "review": null,
+        "schema_version": "1.0.0",
+        "scope": {
+          "geography": "Germany",
+          "period": "2024",
+          "system_description": "grid-average electricity generation; average (not marginal); applies only to electricity-consuming devices"
+        },
+        "source": {
+          "citation": "Our World in Data, 'Data on Energy' (legacy release), repository owid/energy-data, commit f8de88a4f6f9cab44f1cf606047cbd6c4414042c, file owid-energy-data.csv, column carbon_intensity_elec. Per the OWID codebook the underlying source is Ember, Yearly Electricity Data (2026) and Yearly Electricity Data Europe (2026), https://ember-energy.org/data/yearly-electricity-data/.",
+          "locator": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv line 5: country=Germany, year=2024, column carbon_intensity_elec",
+          "retrieved_on": "2026-10-15",
+          "source_id": "owid-energy-data@f8de88a",
+          "url": "https://github.com/owid/energy-data/tree/f8de88a4f6f9cab44f1cf606047cbd6c4414042c"
+        },
+        "uncertainty": {
+          "kind": "unknown"
+        },
+        "unit": "gCO2e/kWh",
+        "value": 336.38,
+        "variable_id": "f"
+      },
+      "geography_codes": [
+        "DE"
+      ],
+      "metadata": {
+        "import_spec_sha256": "358006a0352a10bf10d4c4cf26bf43768ba4abeea877cf7f58491104f3834c02",
+        "raw_column": "carbon_intensity_elec",
+        "raw_file": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv",
+        "raw_line": "5",
+        "raw_row_sha256": "c59e6f84a7dc0812d465a4d04ef77f758b8222ddbaa0d12d6acddf7d74393ac0",
+        "raw_value_text": "336.380",
+        "transformations": "none: value is the decimal text '336.380' parsed to float64; unit 'gCO2e/kWh' declared by EcoBackfire to match the source codebook text 'grams of CO₂ equivalents per kilowatt-hour (gCO₂)'; no scaling, rounding, unit conversion or imputation"
+      },
+      "methodology": null,
+      "quality": null,
+      "temporal": {
+        "end": "2024",
+        "start": "2024"
+      }
+    },
+    {
+      "derivation": null,
+      "derived_from": [],
+      "evidence": {
+        "description": "Lifecycle greenhouse-gas intensity of electricity generation (grid average), per kWh generated",
+        "note": "EcoBackfire applicability caveat (not from the source): the source defines this per kWh generated, whereas the model's f is per kWh of final energy delivered, so transmission and distribution losses are not represented; the source gives no uncertainty.",
+        "provenance_class": "sourced",
+        "record_id": "f.fr.2024",
+        "review": null,
+        "schema_version": "1.0.0",
+        "scope": {
+          "geography": "France",
+          "period": "2024",
+          "system_description": "grid-average electricity generation; average (not marginal); applies only to electricity-consuming devices"
+        },
+        "source": {
+          "citation": "Our World in Data, 'Data on Energy' (legacy release), repository owid/energy-data, commit f8de88a4f6f9cab44f1cf606047cbd6c4414042c, file owid-energy-data.csv, column carbon_intensity_elec. Per the OWID codebook the underlying source is Ember, Yearly Electricity Data (2026) and Yearly Electricity Data Europe (2026), https://ember-energy.org/data/yearly-electricity-data/.",
+          "locator": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv line 6: country=France, year=2024, column carbon_intensity_elec",
+          "retrieved_on": "2026-10-15",
+          "source_id": "owid-energy-data@f8de88a",
+          "url": "https://github.com/owid/energy-data/tree/f8de88a4f6f9cab44f1cf606047cbd6c4414042c"
+        },
+        "uncertainty": {
+          "kind": "unknown"
+        },
+        "unit": "gCO2e/kWh",
+        "value": 40.48,
+        "variable_id": "f"
+      },
+      "geography_codes": [
+        "FR"
+      ],
+      "metadata": {
+        "import_spec_sha256": "358006a0352a10bf10d4c4cf26bf43768ba4abeea877cf7f58491104f3834c02",
+        "raw_column": "carbon_intensity_elec",
+        "raw_file": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv",
+        "raw_line": "6",
+        "raw_row_sha256": "1df3ea1ecd41178e51ee217b4ff3f91c149feaa928e1565b840ea591ba98f2d1",
+        "raw_value_text": "40.480",
+        "transformations": "none: value is the decimal text '40.480' parsed to float64; unit 'gCO2e/kWh' declared by EcoBackfire to match the source codebook text 'grams of CO₂ equivalents per kilowatt-hour (gCO₂)'; no scaling, rounding, unit conversion or imputation"
+      },
+      "methodology": null,
+      "quality": null,
+      "temporal": {
+        "end": "2024",
+        "start": "2024"
+      }
+    }
+  ],
+  "release_version": "1.0.0",
+  "schema_version": "1.0.0",
+  "title": "Lifecycle carbon intensity of electricity generation, 2024 (Our World in Data / Ember), 5 geographies"
+}

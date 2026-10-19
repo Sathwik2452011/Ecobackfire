@@ -1,0 +1,961 @@
+{
+  "base_inputs": {
+    "E0": {
+      "unit": "kWh/yr",
+      "value": 3000.0
+    },
+    "EM0": {
+      "unit": "kgCO2e",
+      "value": 1000.0
+    },
+    "EM1": {
+      "unit": "kgCO2e",
+      "value": 1720.0
+    },
+    "L": {
+      "unit": "yr",
+      "value": 12.0
+    },
+    "epsilon": {
+      "unit": "dimensionless",
+      "value": 0.5
+    },
+    "eta": {
+      "unit": "dimensionless",
+      "value": 0.3
+    },
+    "f": {
+      "unit": "kgCO2e/kWh",
+      "value": 0.4
+    },
+    "phi": {
+      "unit": "dimensionless",
+      "value": 0.8
+    },
+    "s_max": {
+      "unit": "dimensionless",
+      "value": 1.5
+    }
+  },
+  "breakeven": null,
+  "compare": [
+    {
+      "decision": {
+        "label": "beneficial",
+        "metric_id": "delta_emissions_beneficial",
+        "unit": "kgCO2e/yr",
+        "value": -299.9999999999999
+      },
+      "name": "eps_0p0",
+      "outputs": {
+        "C0": {
+          "unit": "kgCO2e/yr",
+          "value": 1283.3333333333333
+        },
+        "C1": {
+          "unit": "kgCO2e/yr",
+          "value": 983.3333333333334
+        },
+        "E1": {
+          "unit": "kWh/yr",
+          "value": 2100.0
+        },
+        "dC": {
+          "unit": "kgCO2e/yr",
+          "value": -299.9999999999999
+        },
+        "dC_normalized": {
+          "unit": "dimensionless",
+          "value": -0.25000000000000006
+        },
+        "intensity_ratio": {
+          "unit": "dimensionless",
+          "value": 0.7662337662337663
+        },
+        "r_embodied_burden": {
+          "unit": "dimensionless",
+          "value": 0.05
+        },
+        "rebound_R": {
+          "unit": "dimensionless",
+          "value": 0.0
+        },
+        "service_ratio": {
+          "unit": "dimensionless",
+          "value": 1.0
+        }
+      },
+      "overrides": {
+        "epsilon": 0.0
+      },
+      "trace": [
+        {
+          "equation": "EQ1",
+          "formula": "pi = 1 - phi*eta",
+          "inputs": {
+            "eta": 0.3,
+            "phi": 0.8
+          },
+          "output": {
+            "pi": 0.76
+          },
+          "step": 1,
+          "unit": ""
+        },
+        {
+          "equation": "EQ2",
+          "formula": "S1/S0 = pi^(-epsilon)",
+          "inputs": {
+            "epsilon": 0.0,
+            "pi": 0.76
+          },
+          "output": {
+            "service_ratio": 1.0
+          },
+          "step": 2,
+          "unit": ""
+        },
+        {
+          "equation": "EQ3",
+          "formula": "E1 = (1-eta)*(S1/S0)*E0",
+          "inputs": {
+            "E0": 3000.0,
+            "eta": 0.3,
+            "service_ratio": 1.0
+          },
+          "output": {
+            "E1": 2100.0
+          },
+          "step": 3,
+          "unit": "kWh/yr"
+        },
+        {
+          "equation": "EQ4",
+          "formula": "C0 = f*E0 + EM0e/L ; C1 = f*E1 + EM1e/L",
+          "inputs": {
+            "E0": 3000.0,
+            "E1": 2100.0,
+            "EM0e": 1000.0,
+            "EM1e": 1720.0,
+            "L": 12.0,
+            "f": 0.4
+          },
+          "output": {
+            "C0": 1283.3333333333333,
+            "C1": 983.3333333333334
+          },
+          "step": 4,
+          "unit": "kgCO2e/yr"
+        },
+        {
+          "equation": "EQ5",
+          "formula": "dC = C1 - C0",
+          "inputs": {
+            "C0": 1283.3333333333333,
+            "C1": 983.3333333333334
+          },
+          "output": {
+            "dC": -299.9999999999999
+          },
+          "step": 5,
+          "unit": "kgCO2e/yr"
+        },
+        {
+          "equation": "EQ6",
+          "formula": "r = dEM/(L f E0); dC/(f E0) = (1-eta)*(S1/S0) - 1 + r",
+          "inputs": {
+            "E0": 3000.0,
+            "L": 12.0,
+            "dEM": 720.0,
+            "f": 0.4
+          },
+          "output": {
+            "dC_normalized": -0.25000000000000006,
+            "r": 0.05
+          },
+          "step": 6,
+          "unit": ""
+        },
+        {
+          "equation": "EQ7",
+          "formula": "R = 1 - (E0-E1)/(eta*E0)",
+          "inputs": {
+            "E0": 3000.0,
+            "E1": 2100.0,
+            "eta": 0.3
+          },
+          "output": {
+            "rebound_R": 0.0
+          },
+          "step": 7,
+          "unit": ""
+        },
+        {
+          "equation": "EQ8",
+          "formula": "intensity_ratio = (C1/C0)/(S1/S0)",
+          "inputs": {
+            "C0": 1283.3333333333333,
+            "C1": 983.3333333333334,
+            "service_ratio": 1.0
+          },
+          "output": {
+            "intensity_ratio": 0.7662337662337663
+          },
+          "step": 8,
+          "unit": ""
+        }
+      ]
+    },
+    {
+      "decision": {
+        "label": "beneficial",
+        "metric_id": "delta_emissions_beneficial",
+        "unit": "kgCO2e/yr",
+        "value": -176.45391774364066
+      },
+      "name": "eps_0p5",
+      "outputs": {
+        "C0": {
+          "unit": "kgCO2e/yr",
+          "value": 1283.3333333333333
+        },
+        "C1": {
+          "unit": "kgCO2e/yr",
+          "value": 1106.8794155896926
+        },
+        "E1": {
+          "unit": "kWh/yr",
+          "value": 2408.8652056408982
+        },
+        "dC": {
+          "unit": "kgCO2e/yr",
+          "value": -176.45391774364066
+        },
+        "dC_normalized": {
+          "unit": "dimensionless",
+          "value": -0.14704493145303393
+        },
+        "intensity_ratio": {
+          "unit": "dimensionless",
+          "value": 0.7519130673102592
+        },
+        "r_embodied_burden": {
+          "unit": "dimensionless",
+          "value": 0.05
+        },
+        "rebound_R": {
+          "unit": "dimensionless",
+          "value": 0.3431835618232203
+        },
+        "service_ratio": {
+          "unit": "dimensionless",
+          "value": 1.1470786693528088
+        }
+      },
+      "overrides": {
+        "epsilon": 0.5
+      },
+      "trace": [
+        {
+          "equation": "EQ1",
+          "formula": "pi = 1 - phi*eta",
+          "inputs": {
+            "eta": 0.3,
+            "phi": 0.8
+          },
+          "output": {
+            "pi": 0.76
+          },
+          "step": 1,
+          "unit": ""
+        },
+        {
+          "equation": "EQ2",
+          "formula": "S1/S0 = pi^(-epsilon)",
+          "inputs": {
+            "epsilon": 0.5,
+            "pi": 0.76
+          },
+          "output": {
+            "service_ratio": 1.1470786693528088
+          },
+          "step": 2,
+          "unit": ""
+        },
+        {
+          "equation": "EQ3",
+          "formula": "E1 = (1-eta)*(S1/S0)*E0",
+          "inputs": {
+            "E0": 3000.0,
+            "eta": 0.3,
+            "service_ratio": 1.1470786693528088
+          },
+          "output": {
+            "E1": 2408.8652056408982
+          },
+          "step": 3,
+          "unit": "kWh/yr"
+        },
+        {
+          "equation": "EQ4",
+          "formula": "C0 = f*E0 + EM0e/L ; C1 = f*E1 + EM1e/L",
+          "inputs": {
+            "E0": 3000.0,
+            "E1": 2408.8652056408982,
+            "EM0e": 1000.0,
+            "EM1e": 1720.0,
+            "L": 12.0,
+            "f": 0.4
+          },
+          "output": {
+            "C0": 1283.3333333333333,
+            "C1": 1106.8794155896926
+          },
+          "step": 4,
+          "unit": "kgCO2e/yr"
+        },
+        {
+          "equation": "EQ5",
+          "formula": "dC = C1 - C0",
+          "inputs": {
+            "C0": 1283.3333333333333,
+            "C1": 1106.8794155896926
+          },
+          "output": {
+            "dC": -176.45391774364066
+          },
+          "step": 5,
+          "unit": "kgCO2e/yr"
+        },
+        {
+          "equation": "EQ6",
+          "formula": "r = dEM/(L f E0); dC/(f E0) = (1-eta)*(S1/S0) - 1 + r",
+          "inputs": {
+            "E0": 3000.0,
+            "L": 12.0,
+            "dEM": 720.0,
+            "f": 0.4
+          },
+          "output": {
+            "dC_normalized": -0.14704493145303393,
+            "r": 0.05
+          },
+          "step": 6,
+          "unit": ""
+        },
+        {
+          "equation": "EQ7",
+          "formula": "R = 1 - (E0-E1)/(eta*E0)",
+          "inputs": {
+            "E0": 3000.0,
+            "E1": 2408.8652056408982,
+            "eta": 0.3
+          },
+          "output": {
+            "rebound_R": 0.3431835618232203
+          },
+          "step": 7,
+          "unit": ""
+        },
+        {
+          "equation": "EQ8",
+          "formula": "intensity_ratio = (C1/C0)/(S1/S0)",
+          "inputs": {
+            "C0": 1283.3333333333333,
+            "C1": 1106.8794155896926,
+            "service_ratio": 1.1470786693528088
+          },
+          "output": {
+            "intensity_ratio": 0.7519130673102592
+          },
+          "step": 8,
+          "unit": ""
+        }
+      ]
+    },
+    {
+      "decision": {
+        "label": "beneficial",
+        "metric_id": "delta_emissions_beneficial",
+        "unit": "kgCO2e/yr",
+        "value": -34.73684210526312
+      },
+      "name": "eps_1p0",
+      "outputs": {
+        "C0": {
+          "unit": "kgCO2e/yr",
+          "value": 1283.3333333333333
+        },
+        "C1": {
+          "unit": "kgCO2e/yr",
+          "value": 1248.5964912280701
+        },
+        "E1": {
+          "unit": "kWh/yr",
+          "value": 2763.157894736842
+        },
+        "dC": {
+          "unit": "kgCO2e/yr",
+          "value": -34.73684210526312
+        },
+        "dC_normalized": {
+          "unit": "dimensionless",
+          "value": -0.028947368421052652
+        },
+        "intensity_ratio": {
+          "unit": "dimensionless",
+          "value": 0.7394285714285713
+        },
+        "r_embodied_burden": {
+          "unit": "dimensionless",
+          "value": 0.05
+        },
+        "rebound_R": {
+          "unit": "dimensionless",
+          "value": 0.7368421052631579
+        },
+        "service_ratio": {
+          "unit": "dimensionless",
+          "value": 1.3157894736842106
+        }
+      },
+      "overrides": {
+        "epsilon": 1.0
+      },
+      "trace": [
+        {
+          "equation": "EQ1",
+          "formula": "pi = 1 - phi*eta",
+          "inputs": {
+            "eta": 0.3,
+            "phi": 0.8
+          },
+          "output": {
+            "pi": 0.76
+          },
+          "step": 1,
+          "unit": ""
+        },
+        {
+          "equation": "EQ2",
+          "formula": "S1/S0 = pi^(-epsilon)",
+          "inputs": {
+            "epsilon": 1.0,
+            "pi": 0.76
+          },
+          "output": {
+            "service_ratio": 1.3157894736842106
+          },
+          "step": 2,
+          "unit": ""
+        },
+        {
+          "equation": "EQ3",
+          "formula": "E1 = (1-eta)*(S1/S0)*E0",
+          "inputs": {
+            "E0": 3000.0,
+            "eta": 0.3,
+            "service_ratio": 1.3157894736842106
+          },
+          "output": {
+            "E1": 2763.157894736842
+          },
+          "step": 3,
+          "unit": "kWh/yr"
+        },
+        {
+          "equation": "EQ4",
+          "formula": "C0 = f*E0 + EM0e/L ; C1 = f*E1 + EM1e/L",
+          "inputs": {
+            "E0": 3000.0,
+            "E1": 2763.157894736842,
+            "EM0e": 1000.0,
+            "EM1e": 1720.0,
+            "L": 12.0,
+            "f": 0.4
+          },
+          "output": {
+            "C0": 1283.3333333333333,
+            "C1": 1248.5964912280701
+          },
+          "step": 4,
+          "unit": "kgCO2e/yr"
+        },
+        {
+          "equation": "EQ5",
+          "formula": "dC = C1 - C0",
+          "inputs": {
+            "C0": 1283.3333333333333,
+            "C1": 1248.5964912280701
+          },
+          "output": {
+            "dC": -34.73684210526312
+          },
+          "step": 5,
+          "unit": "kgCO2e/yr"
+        },
+        {
+          "equation": "EQ6",
+          "formula": "r = dEM/(L f E0); dC/(f E0) = (1-eta)*(S1/S0) - 1 + r",
+          "inputs": {
+            "E0": 3000.0,
+            "L": 12.0,
+            "dEM": 720.0,
+            "f": 0.4
+          },
+          "output": {
+            "dC_normalized": -0.028947368421052652,
+            "r": 0.05
+          },
+          "step": 6,
+          "unit": ""
+        },
+        {
+          "equation": "EQ7",
+          "formula": "R = 1 - (E0-E1)/(eta*E0)",
+          "inputs": {
+            "E0": 3000.0,
+            "E1": 2763.157894736842,
+            "eta": 0.3
+          },
+          "output": {
+            "rebound_R": 0.7368421052631579
+          },
+          "step": 7,
+          "unit": ""
+        },
+        {
+          "equation": "EQ8",
+          "formula": "intensity_ratio = (C1/C0)/(S1/S0)",
+          "inputs": {
+            "C0": 1283.3333333333333,
+            "C1": 1248.5964912280701,
+            "service_ratio": 1.3157894736842106
+          },
+          "output": {
+            "intensity_ratio": 0.7394285714285713
+          },
+          "step": 8,
+          "unit": ""
+        }
+      ]
+    },
+    {
+      "decision": {
+        "label": "not_beneficial",
+        "metric_id": "delta_emissions_beneficial",
+        "unit": "kgCO2e/yr",
+        "value": 127.823792442578
+      },
+      "name": "eps_1p5",
+      "outputs": {
+        "C0": {
+          "unit": "kgCO2e/yr",
+          "value": 1283.3333333333333
+        },
+        "C1": {
+          "unit": "kgCO2e/yr",
+          "value": 1411.1571257759113
+        },
+        "E1": {
+          "unit": "kWh/yr",
+          "value": 3169.5594811064448
+        },
+        "dC": {
+          "unit": "kgCO2e/yr",
+          "value": 127.823792442578
+        },
+        "dC_normalized": {
+          "unit": "dimensionless",
+          "value": 0.10651982703548164
+        },
+        "intensity_ratio": {
+          "unit": "dimensionless",
+          "value": 0.728544840246706
+        },
+        "r_embodied_burden": {
+          "unit": "dimensionless",
+          "value": 0.05
+        },
+        "rebound_R": {
+          "unit": "dimensionless",
+          "value": 1.1883994234516053
+        },
+        "service_ratio": {
+          "unit": "dimensionless",
+          "value": 1.5093140386221169
+        }
+      },
+      "overrides": {
+        "epsilon": 1.5
+      },
+      "trace": [
+        {
+          "equation": "EQ1",
+          "formula": "pi = 1 - phi*eta",
+          "inputs": {
+            "eta": 0.3,
+            "phi": 0.8
+          },
+          "output": {
+            "pi": 0.76
+          },
+          "step": 1,
+          "unit": ""
+        },
+        {
+          "equation": "EQ2",
+          "formula": "S1/S0 = pi^(-epsilon)",
+          "inputs": {
+            "epsilon": 1.5,
+            "pi": 0.76
+          },
+          "output": {
+            "service_ratio": 1.5093140386221169
+          },
+          "step": 2,
+          "unit": ""
+        },
+        {
+          "equation": "EQ3",
+          "formula": "E1 = (1-eta)*(S1/S0)*E0",
+          "inputs": {
+            "E0": 3000.0,
+            "eta": 0.3,
+            "service_ratio": 1.5093140386221169
+          },
+          "output": {
+            "E1": 3169.5594811064448
+          },
+          "step": 3,
+          "unit": "kWh/yr"
+        },
+        {
+          "equation": "EQ4",
+          "formula": "C0 = f*E0 + EM0e/L ; C1 = f*E1 + EM1e/L",
+          "inputs": {
+            "E0": 3000.0,
+            "E1": 3169.5594811064448,
+            "EM0e": 1000.0,
+            "EM1e": 1720.0,
+            "L": 12.0,
+            "f": 0.4
+          },
+          "output": {
+            "C0": 1283.3333333333333,
+            "C1": 1411.1571257759113
+          },
+          "step": 4,
+          "unit": "kgCO2e/yr"
+        },
+        {
+          "equation": "EQ5",
+          "formula": "dC = C1 - C0",
+          "inputs": {
+            "C0": 1283.3333333333333,
+            "C1": 1411.1571257759113
+          },
+          "output": {
+            "dC": 127.823792442578
+          },
+          "step": 5,
+          "unit": "kgCO2e/yr"
+        },
+        {
+          "equation": "EQ6",
+          "formula": "r = dEM/(L f E0); dC/(f E0) = (1-eta)*(S1/S0) - 1 + r",
+          "inputs": {
+            "E0": 3000.0,
+            "L": 12.0,
+            "dEM": 720.0,
+            "f": 0.4
+          },
+          "output": {
+            "dC_normalized": 0.10651982703548164,
+            "r": 0.05
+          },
+          "step": 6,
+          "unit": ""
+        },
+        {
+          "equation": "EQ7",
+          "formula": "R = 1 - (E0-E1)/(eta*E0)",
+          "inputs": {
+            "E0": 3000.0,
+            "E1": 3169.5594811064448,
+            "eta": 0.3
+          },
+          "output": {
+            "rebound_R": 1.1883994234516053
+          },
+          "step": 7,
+          "unit": ""
+        },
+        {
+          "equation": "EQ8",
+          "formula": "intensity_ratio = (C1/C0)/(S1/S0)",
+          "inputs": {
+            "C0": 1283.3333333333333,
+            "C1": 1411.1571257759113,
+            "service_ratio": 1.5093140386221169
+          },
+          "output": {
+            "intensity_ratio": 0.728544840246706
+          },
+          "step": 8,
+          "unit": ""
+        }
+      ]
+    },
+    {
+      "decision": {
+        "label": "not_beneficial",
+        "metric_id": "delta_emissions_beneficial",
+        "unit": "kgCO2e/yr",
+        "value": 314.293628808864
+      },
+      "name": "eps_2p0",
+      "outputs": {
+        "C0": {
+          "unit": "kgCO2e/yr",
+          "value": 1283.3333333333333
+        },
+        "C1": {
+          "unit": "kgCO2e/yr",
+          "value": 1597.6269621421973
+        },
+        "E1": {
+          "unit": "kWh/yr",
+          "value": 3635.73407202216
+        },
+        "dC": {
+          "unit": "kgCO2e/yr",
+          "value": 314.293628808864
+        },
+        "dC_normalized": {
+          "unit": "dimensionless",
+          "value": 0.2619113573407201
+        },
+        "intensity_ratio": {
+          "unit": "dimensionless",
+          "value": 0.7190566233766233
+        },
+        "r_embodied_burden": {
+          "unit": "dimensionless",
+          "value": 0.05
+        },
+        "rebound_R": {
+          "unit": "dimensionless",
+          "value": 1.7063711911357333
+        },
+        "service_ratio": {
+          "unit": "dimensionless",
+          "value": 1.7313019390581716
+        }
+      },
+      "overrides": {
+        "epsilon": 2.0
+      },
+      "trace": [
+        {
+          "equation": "EQ1",
+          "formula": "pi = 1 - phi*eta",
+          "inputs": {
+            "eta": 0.3,
+            "phi": 0.8
+          },
+          "output": {
+            "pi": 0.76
+          },
+          "step": 1,
+          "unit": ""
+        },
+        {
+          "equation": "EQ2",
+          "formula": "S1/S0 = pi^(-epsilon)",
+          "inputs": {
+            "epsilon": 2.0,
+            "pi": 0.76
+          },
+          "output": {
+            "service_ratio": 1.7313019390581716
+          },
+          "step": 2,
+          "unit": ""
+        },
+        {
+          "equation": "EQ3",
+          "formula": "E1 = (1-eta)*(S1/S0)*E0",
+          "inputs": {
+            "E0": 3000.0,
+            "eta": 0.3,
+            "service_ratio": 1.7313019390581716
+          },
+          "output": {
+            "E1": 3635.73407202216
+          },
+          "step": 3,
+          "unit": "kWh/yr"
+        },
+        {
+          "equation": "EQ4",
+          "formula": "C0 = f*E0 + EM0e/L ; C1 = f*E1 + EM1e/L",
+          "inputs": {
+            "E0": 3000.0,
+            "E1": 3635.73407202216,
+            "EM0e": 1000.0,
+            "EM1e": 1720.0,
+            "L": 12.0,
+            "f": 0.4
+          },
+          "output": {
+            "C0": 1283.3333333333333,
+            "C1": 1597.6269621421973
+          },
+          "step": 4,
+          "unit": "kgCO2e/yr"
+        },
+        {
+          "equation": "EQ5",
+          "formula": "dC = C1 - C0",
+          "inputs": {
+            "C0": 1283.3333333333333,
+            "C1": 1597.6269621421973
+          },
+          "output": {
+            "dC": 314.293628808864
+          },
+          "step": 5,
+          "unit": "kgCO2e/yr"
+        },
+        {
+          "equation": "EQ6",
+          "formula": "r = dEM/(L f E0); dC/(f E0) = (1-eta)*(S1/S0) - 1 + r",
+          "inputs": {
+            "E0": 3000.0,
+            "L": 12.0,
+            "dEM": 720.0,
+            "f": 0.4
+          },
+          "output": {
+            "dC_normalized": 0.2619113573407201,
+            "r": 0.05
+          },
+          "step": 6,
+          "unit": ""
+        },
+        {
+          "equation": "EQ7",
+          "formula": "R = 1 - (E0-E1)/(eta*E0)",
+          "inputs": {
+            "E0": 3000.0,
+            "E1": 3635.73407202216,
+            "eta": 0.3
+          },
+          "output": {
+            "rebound_R": 1.7063711911357333
+          },
+          "step": 7,
+          "unit": ""
+        },
+        {
+          "equation": "EQ8",
+          "formula": "intensity_ratio = (C1/C0)/(S1/S0)",
+          "inputs": {
+            "C0": 1283.3333333333333,
+            "C1": 1597.6269621421973,
+            "service_ratio": 1.7313019390581716
+          },
+          "output": {
+            "intensity_ratio": 0.7190566233766233
+          },
+          "step": 8,
+          "unit": ""
+        }
+      ]
+    }
+  ],
+  "config_sha256": "cd85ea318b44c755d0f1a53ff45465b67cc3926d1db0b270d1161aa8033fced3",
+  "experiment_id": "e1_compare",
+  "functional_unit": {
+    "description": "Annual delivered service of one representative user of the service class over one year",
+    "id": "FU1",
+    "quantity_unit": "service units/yr (abstract; cancels in the primary metric)",
+    "reference_flow_description": "Primary metric: absolute annual emissions (kgCO2e/yr per user). Secondary metric: emissions per unit of service (intensity_ratio)."
+  },
+  "input_provenance_summary": [
+    {
+      "provenance_class": "illustrative",
+      "uncertainty_kind": "interval",
+      "variable_id": "E0"
+    },
+    {
+      "provenance_class": "illustrative",
+      "uncertainty_kind": "interval",
+      "variable_id": "EM0"
+    },
+    {
+      "provenance_class": "illustrative",
+      "uncertainty_kind": "interval",
+      "variable_id": "EM1"
+    },
+    {
+      "provenance_class": "illustrative",
+      "uncertainty_kind": "interval",
+      "variable_id": "L"
+    },
+    {
+      "provenance_class": "illustrative",
+      "uncertainty_kind": "interval",
+      "variable_id": "epsilon"
+    },
+    {
+      "provenance_class": "illustrative",
+      "uncertainty_kind": "interval",
+      "variable_id": "eta"
+    },
+    {
+      "provenance_class": "illustrative",
+      "uncertainty_kind": "interval",
+      "variable_id": "f"
+    },
+    {
+      "provenance_class": "illustrative",
+      "uncertainty_kind": "interval",
+      "variable_id": "phi"
+    },
+    {
+      "provenance_class": "illustrative",
+      "uncertainty_kind": "interval",
+      "variable_id": "s_max"
+    }
+  ],
+  "kind": "compare",
+  "model_ref": "efficiency_rebound@1.0.0",
+  "options": {
+    "boundary_variant": "B1",
+    "demand_form": "constant_elasticity"
+  },
+  "schema_version": "1.0.0",
+  "sensitivity": null,
+  "status": "completed_with_warnings",
+  "system_boundary": {
+    "cutoff_rules": "none declared",
+    "description": "operational + annualized embodied emissions; decision at end of life of the old device",
+    "excluded_stages": [
+      "indirect rebound",
+      "end-of-life processing",
+      "grid dynamics",
+      "maintenance and replacement"
+    ],
+    "id": "B1",
+    "included_stages": [
+      "operational energy use",
+      "embodied emissions (amortized)"
+    ]
+  },
+  "warnings": [
+    "bound but unused under the chosen options: ['s_max']"
+  ],
+  "weakest_provenance": "illustrative"
+}

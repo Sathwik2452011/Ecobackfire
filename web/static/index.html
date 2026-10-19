@@ -1,0 +1,963 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>EcoBackfire — evidence-aware backfire research</title>
+<style>
+  /* ---------- tokens (solid colours only) ---------- */
+  :root{
+    --paper:#F4F4F0; --surface:#FFFFFF; --sunk:#ECEDE7;
+    --ink:#1C2220; --muted:#566059;
+    --rule:#D6D9D1; --rule-strong:#AEB4AA;
+    --accent:#0E6A5C; --accent-deep:#0A4F44; --accent-tint:#E2EEEB;
+    --caution-ink:#6B4700; --caution-bg:#FAF1D9; --caution-rule:#CFB064;
+    --danger-ink:#8A2424; --danger-bg:#FBECEA; --danger-rule:#D9A5A0;
+    --sans:"Avenir Next","Segoe UI Variable Text","Segoe UI","Helvetica Neue",system-ui,-apple-system,"Noto Sans",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono","JetBrains Mono","Roboto Mono",Menlo,Consolas,"DejaVu Sans Mono",monospace;
+    --measure:56rem;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;color-scheme:light}
+  @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+  body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.55 var(--sans);overflow-wrap:break-word}
+  .wrap{max-width:var(--measure);margin:0 auto;padding:0 1.25rem}
+  .mono,code,.pid,.num,.val,.hash,.tag,.chip.m{font-family:var(--mono)}
+  a{color:var(--accent);text-underline-offset:.18em;text-decoration-thickness:1px}
+  a:hover{color:var(--accent-deep)}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:2px}
+  [hidden]{display:none!important}
+  .vh{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  code{font-size:.86em;background:var(--sunk);padding:.05em .3em;border-radius:3px}
+  .muted{color:var(--muted)} .small{font-size:.875rem}
+
+  /* ---------- header ---------- */
+  .top{background:var(--surface);border-bottom:1px solid var(--rule)}
+  .top-in{display:flex;align-items:center;gap:.9rem;min-height:3.5rem;flex-wrap:wrap;padding-top:.5rem;padding-bottom:.5rem}
+  .brand{display:flex;align-items:center;gap:.6rem}
+  .mark{width:1.75rem;height:1.75rem;flex:none;display:block}
+  .wm{font-weight:700;font-size:1.15rem;letter-spacing:-.01em}
+  .descr{color:var(--muted);font-size:.9rem;padding-left:.9rem;border-left:1px solid var(--rule-strong)}
+  .status{margin-left:auto;display:flex;align-items:center;gap:.45rem;font:500 .8125rem/1.3 var(--mono);color:var(--muted)}
+  .dot{width:.55rem;height:.55rem;border-radius:50%;background:var(--rule-strong);flex:none}
+  .status[data-s=ready] .dot{background:var(--accent)}
+  .status[data-s=ready]{color:var(--ink)}
+  .status[data-s=warn] .dot{background:#B07A00}
+  .status[data-s=warn]{color:var(--caution-ink)}
+
+  /* ---------- workflow strip ---------- */
+  .pipe{list-style:none;margin:0 auto;padding:.85rem 1.25rem;max-width:var(--measure);display:flex;gap:.3rem;flex-wrap:wrap;align-items:center;font-size:.8125rem;color:var(--muted)}
+  .pipe li{display:flex;align-items:center;gap:.4rem;white-space:nowrap}
+  .pipe li+li::before{content:"→";color:var(--rule-strong);margin-right:.3rem}
+  .pipe b{font:600 .75rem/1 var(--mono);width:1.35rem;height:1.35rem;border:1px solid var(--rule-strong);border-radius:50%;display:inline-grid;place-items:center;background:var(--surface)}
+  .pipe li.done{color:var(--ink)} .pipe li.done b{background:var(--accent-tint);border-color:var(--accent);color:var(--accent-deep)}
+  .pipe li[aria-current=step]{color:var(--ink);font-weight:600}
+  .pipe li[aria-current=step] b{background:var(--accent);border-color:var(--accent);color:#fff}
+
+  /* ---------- stages ---------- */
+  main{padding-bottom:4rem}
+  .stage{margin-top:2.75rem;padding-top:1.1rem;border-top:1px solid var(--ink)}
+  .stage-h{display:flex;align-items:baseline;gap:.75rem;margin:0 0 1rem;font-size:1.3rem;line-height:1.25;font-weight:650;letter-spacing:-.01em}
+  .stage-h:focus{outline:none}
+  .stage-h:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+  .num{font-size:.8125rem;font-weight:600;color:var(--accent-deep);letter-spacing:.04em}
+  .lede{margin:.9rem 0 0;color:var(--muted);max-width:42rem}
+  .sub{margin:1.6rem 0 .6rem;font-size:1rem;font-weight:650}
+  .tag{display:inline-block;font-size:.75rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+  .tag.accent{color:var(--accent-deep)} .tag.caution{color:var(--caution-ink)}
+
+  /* ---------- question ---------- */
+  #question{display:block;width:100%;min-height:8.5rem;resize:vertical;font:400 1.4rem/1.4 var(--sans);letter-spacing:-.005em;padding:1.1rem 1.2rem;color:var(--ink);background:var(--surface);border:1px solid var(--rule-strong);border-radius:6px}
+  #question::placeholder{color:#6B746E}
+  #question:focus-visible{outline:3px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+  .q-meta{display:flex;justify-content:flex-end;font:.75rem var(--mono);color:var(--muted);margin-top:.35rem}
+  .actions{display:flex;align-items:center;flex-wrap:wrap;gap:.9rem 1.2rem;margin-top:1.1rem}
+  .hint{font-size:.875rem;color:var(--muted)}
+  .readnote{margin:2rem 0 0;padding:.1rem 0 .1rem 1rem;border-left:3px solid var(--caution-rule);color:var(--ink);font-size:.9rem;max-width:44rem}
+  .readnote strong{font-weight:650}
+
+  /* ---------- buttons ---------- */
+  .btn{font:600 .95rem/1.2 var(--sans);min-height:2.75rem;padding:.55rem 1.1rem;border-radius:5px;border:1px solid var(--ink);background:var(--surface);color:var(--ink);cursor:pointer;transition:background-color .12s,color .12s,border-color .12s}
+  .btn:hover:not(:disabled){background:var(--sunk)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.primary:hover:not(:disabled){background:var(--accent-deep);border-color:var(--accent-deep)}
+  .btn.run{font-size:1.05rem;min-height:3.25rem;padding:.75rem 1.6rem;background:var(--ink);border-color:var(--ink);color:#fff}
+  .btn.run:hover:not(:disabled){background:#000}
+  .btn.quiet{border-color:var(--rule-strong);color:var(--accent-deep)}
+  .btn:disabled{background:var(--sunk);color:#5C655F;border-color:var(--rule);cursor:not-allowed}
+  .btn:active:not(:disabled){transform:translateY(1px)}
+  @media (prefers-reduced-motion:reduce){.btn,.chev,.act .face{transition:none!important}.btn:active{transform:none!important}}
+
+  /* ---------- notes ---------- */
+  .note{margin:.8rem 0;padding:.65rem .9rem;border:1px solid var(--rule);border-left:3px solid var(--rule-strong);background:var(--surface);font-size:.9rem;border-radius:0 4px 4px 0}
+  .note.caution{background:var(--caution-bg);border-color:var(--caution-rule);border-left-color:#B07A00;color:#3E2A00}
+  .note.error{background:var(--danger-bg);border-color:var(--danger-rule);border-left-color:var(--danger-ink);color:#5A1717}
+  .note.ok{background:var(--accent-tint);border-color:#9CC4BC;border-left-color:var(--accent);color:#07342C}
+  .note ul{margin:.3rem 0 0;padding-left:1.2rem}
+
+  /* ---------- chips ---------- */
+  .chip{display:inline-flex;align-items:center;gap:.3rem;font:600 .6875rem/1 var(--mono);letter-spacing:.04em;padding:.32rem .5rem;border-radius:3px;border:1px solid var(--rule-strong);background:var(--surface);color:var(--ink);white-space:nowrap;text-transform:uppercase}
+  .chip.m{text-transform:none;letter-spacing:0;font-size:.8125rem}
+  .chip.sourced{border-color:var(--accent);color:var(--accent-deep);background:var(--accent-tint)}
+  .chip.caution{border-color:var(--caution-rule);color:var(--caution-ink);background:var(--caution-bg)}
+  .chip.insufficient{border-style:dashed;color:#3F4843;background:var(--sunk)}
+  .chip.override,.chip.ink{background:var(--ink);border-color:var(--ink);color:#fff}
+  .chip.illus{border-style:dotted;border-width:2px;color:#3F4843}
+  .chip.fail{border-color:var(--danger-rule);color:var(--danger-ink);background:var(--danger-bg)}
+
+  /* ---------- progress lists (research / run) ---------- */
+  .prog{list-style:none;margin:.6rem 0 0;padding:0}
+  .prog li{display:flex;gap:.7rem;align-items:baseline;padding:.4rem 0;border-top:1px solid var(--rule);font-size:.95rem}
+  .prog li:first-child{border-top:0}
+  .prog li::before{font:600 .9rem/1 var(--mono);width:1rem;flex:none;text-align:center;color:var(--muted)}
+  .prog li[data-st=done]::before{content:"✓";color:var(--accent)}
+  .prog li[data-st=active]::before{content:"●";color:var(--accent)}
+  .prog li[data-st=pending]::before{content:"○"}
+  .prog li[data-st=pending]{color:var(--muted)}
+  .prog li[data-st=active]{font-weight:600}
+  .prog .t{font:.8125rem var(--mono);color:var(--muted);margin-left:auto;font-weight:400}
+  .panel{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:1.1rem 1.25rem}
+
+  /* ---------- key/value metadata ---------- */
+  dl.kv{display:grid;grid-template-columns:minmax(9rem,14rem) minmax(0,1fr);gap:.35rem 1rem;margin:.6rem 0;font-size:.9rem}
+  dl.kv dt{color:var(--muted)} dl.kv dd{margin:0;min-width:0}
+  dl.kv.meta dd{font-family:var(--mono);font-size:.8125rem}
+  dl.kv.meta dt{font-size:.8125rem}
+  .hash{display:inline-block;max-width:100%;overflow-wrap:anywhere;font-size:.78rem;color:#2F3833}
+  .hash.cut{max-width:16ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
+  pre{margin:.4rem 0;font:.78rem/1.5 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;background:var(--sunk);padding:.7rem .8rem;border-radius:4px;max-width:100%}
+
+  /* ---------- evidence ledger ---------- */
+  .scope{margin:.2rem 0 1.4rem}
+  .find-h{margin:1.4rem 0 .2rem;display:flex;flex-direction:column;gap:.1rem}
+  .param{padding:1.35rem 0 1.5rem;border-top:1px solid var(--rule-strong)}
+  .param-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:.35rem .8rem}
+  .ptitle{display:flex;flex-wrap:wrap;align-items:baseline;gap:.2rem .7rem;min-width:0}
+  .pid{font-size:1.15rem;font-weight:700}
+  .plabel{font-weight:600}
+  .punit{font-size:.8125rem;color:var(--muted)}
+  .param-h .chip{margin-left:auto}
+  .pmsg{margin:.3rem 0 0;font-size:.875rem;color:var(--muted)}
+  .cand{display:grid;grid-template-columns:minmax(9rem,12rem) minmax(0,1fr);gap:.4rem 1.4rem;margin-top:1rem;padding-top:1rem;border-top:1px dotted var(--rule-strong)}
+  .param-h+.pmsg+.cand,.param-h+.cand{border-top:0;padding-top:.2rem}
+  .cand .val{font-size:1.5rem;font-weight:600;line-height:1.15;letter-spacing:-.02em;overflow-wrap:anywhere}
+  .cand .vu{display:block;font:.8125rem var(--mono);color:var(--muted);margin:.15rem 0 .5rem}
+  .cand .vside{display:flex;flex-direction:column;align-items:flex-start;gap:.15rem}
+  .cand .stated{font:.78rem/1.4 var(--mono);color:var(--muted);margin-top:.5rem}
+  .src-t{font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .src-m{font-size:.8125rem;color:var(--muted);margin:.15rem 0 0}
+  .src-m .mono{font-size:.78rem}
+  .matched{margin:.55rem 0 0;font-size:.8125rem;color:var(--muted)}
+  .matched code{background:var(--sunk);color:var(--ink)}
+  blockquote.quote{margin:.6rem 0 0;padding:.05rem 0 .05rem .85rem;border-left:3px solid var(--rule-strong);color:#2F3833;font-size:.92rem}
+  blockquote.quote .ql{display:block;font-size:.75rem;color:var(--muted);margin-bottom:.1rem}
+  details.more{margin-top:.5rem;font-size:.84rem;color:var(--muted)}
+  details.more p{margin:.35rem 0 0}
+  summary{cursor:pointer}
+  summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .choose{margin-top:.8rem;display:flex;flex-wrap:wrap;gap:.5rem}
+  .opts{margin-top:1.1rem;padding-top:.8rem;border-top:1px dotted var(--rule-strong);display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+  .opts .lab{font-size:.8125rem;color:var(--muted);margin-right:.3rem}
+  .illus-note{margin:.6rem 0 0;font-size:.84rem;color:var(--muted)}
+  .illus-note .mono{color:var(--ink)}
+
+  /* radio-as-button */
+  .act{position:relative;display:inline-flex}
+  .act input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;inset:0}
+  .act .face{display:inline-flex;align-items:center;gap:.4rem;min-height:2.5rem;padding:.4rem .95rem;border:1px solid var(--rule-strong);border-radius:5px;background:var(--surface);font:600 .875rem/1.2 var(--sans);color:var(--ink);transition:background-color .12s,border-color .12s,color .12s}
+  .act:hover .face{background:var(--sunk)}
+  .act input:checked+.face{background:var(--accent);border-color:var(--accent);color:#fff}
+  .act input:checked+.face::before{content:"✓"}
+  .act.ink input:checked+.face{background:var(--ink);border-color:var(--ink)}
+  .act.illus input:checked+.face{background:var(--surface);color:var(--ink);border:2px dotted var(--ink)}
+  .act input:focus-visible+.face{outline:3px solid var(--accent);outline-offset:2px}
+  @media (pointer:coarse){.act .face{min-height:2.9rem}}
+
+  /* conflict + insufficient */
+  .conflict{margin-top:1rem;border:1px solid var(--caution-rule);border-left:4px solid #B07A00;background:var(--caution-bg);border-radius:0 6px 6px 0;padding:1rem 1.1rem 1.1rem}
+  .conflict .tag{color:var(--caution-ink)}
+  .conflict>p{margin:.25rem 0 0;font-size:.9rem;color:#3E2A00}
+  .cmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(15.5rem,1fr));gap:.9rem;margin-top:.9rem}
+  .cmp .side{background:var(--surface);border:1px solid var(--caution-rule);border-radius:5px;padding:.9rem 1rem;min-width:0}
+  .cmp .sl{font:600 .75rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--caution-ink)}
+  .cmp .val{font:600 1.5rem/1.15 var(--mono);letter-spacing:-.02em;margin:.3rem 0 0;overflow-wrap:anywhere}
+  .cmp .vu{display:block;font:.8125rem var(--mono);color:var(--muted);margin-bottom:.5rem}
+  .cmp .stated{font:.78rem/1.4 var(--mono);color:var(--muted);margin:.3rem 0 .4rem}
+  .insuff{margin-top:1rem;border:1px dashed var(--rule-strong);background:var(--surface);border-radius:6px;padding:.9rem 1.1rem}
+  .insuff>p{margin:.25rem 0 0;font-size:.92rem}
+
+  /* override editor */
+  .override{margin-top:1rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:0;border:1px solid var(--ink);border-radius:6px;overflow:hidden;background:var(--surface)}
+  .override>div{padding:.85rem 1rem;min-width:0}
+  .override>div+div{border-left:1px solid var(--ink)}
+  .override .val{font:600 1.5rem/1.15 var(--mono);letter-spacing:-.02em;margin-top:.35rem}
+  .override .vu{font:.8125rem var(--mono);color:var(--muted)}
+  .override .u-h{background:var(--ink);color:#fff}
+  .override .u-h .tag,.override .u-h .vu{color:#fff}
+  .override label{display:block;font-size:.8125rem;color:var(--muted);margin:.6rem 0 .15rem}
+  .override .u-h label{color:#D3D9D5}
+  .override input{font:500 1rem var(--mono);padding:.5rem .6rem;border:1px solid var(--rule-strong);border-radius:4px;width:100%;max-width:11rem;background:#fff;color:var(--ink);min-height:2.5rem}
+  .override input.wide{max-width:none;font-family:var(--sans)}
+  .override .rg{display:flex;gap:.5rem;align-items:flex-end;flex-wrap:wrap}
+  .override .rg>div{flex:1 1 6rem}
+  .override .rg>div input{max-width:none}
+  .assume{margin:.55rem 0 0;font-size:.84rem;color:var(--muted)}
+
+  /* ---------- confirmation ---------- */
+  .ready-h{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
+  .ready-h .tag{font-size:.8125rem}
+  .stats{display:flex;flex-wrap:wrap;gap:.4rem 1.8rem;margin:.7rem 0 0;padding:0;list-style:none}
+  .stats li{display:flex;align-items:baseline;gap:.4rem;font-size:.92rem;color:var(--muted)}
+  .stats b{font:600 1.35rem/1 var(--mono);color:var(--ink)}
+  .ledger{width:100%;border-collapse:collapse;font-size:.88rem}
+  .ledger th{font-weight:600;color:var(--muted);text-align:left;font-size:.78rem;padding:.4rem .7rem .4rem 0;border-bottom:1px solid var(--ink);white-space:nowrap}
+  .ledger td{padding:.5rem .7rem .5rem 0;border-bottom:1px solid var(--rule);vertical-align:top}
+  .ledger td:first-child{font-family:var(--mono);font-weight:700}
+  .ledger .mono{font-size:.82rem}
+  .tw{overflow-x:auto;max-width:100%;margin:.5rem 0}
+  .confirm-box{margin-top:1rem;padding:1rem 1.15rem;border:2px solid var(--ink);border-radius:6px;background:var(--surface)}
+  .confirm-box:focus{outline:none}
+  .confirm-box:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+  /* ---------- results ---------- */
+  .key{background:var(--surface);border:1px solid var(--ink);border-radius:6px;padding:1.3rem 1.4rem 1.4rem}
+  .key .kind{display:flex;flex-wrap:wrap;gap:.3rem 1rem;align-items:baseline;justify-content:space-between}
+  .key .big{margin:.5rem 0 0;font:600 clamp(1.9rem,6vw,2.9rem)/1.1 var(--mono);letter-spacing:-.03em;overflow-wrap:anywhere}
+  .key .big .u{font-size:.9rem;font-weight:400;letter-spacing:0;color:var(--muted);margin-left:.6rem}
+  .key .cid{margin:.4rem 0 0;font-size:.9rem;color:var(--muted)}
+  .verdict{margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--rule)}
+  .verdict .vl{display:flex;flex-wrap:wrap;gap:.5rem .8rem;align-items:center}
+  .verdict p{margin:.55rem 0 0;max-width:42rem}
+  .verdict .not{font-weight:650}
+  .eng{margin:1rem 0 0;font-size:.84rem;color:var(--muted);max-width:44rem}
+  .repro{display:flex;gap:1rem;align-items:flex-start;border:1px solid var(--rule-strong);border-radius:6px;padding:1rem 1.2rem;background:var(--surface);margin-top:1.1rem}
+  .repro.ok{border-color:var(--accent);background:var(--accent-tint)}
+  .repro .seal{font:700 1.5rem/1 var(--mono);color:var(--accent-deep);flex:none;width:2rem;height:2rem;border:2px solid currentColor;border-radius:50%;display:grid;place-items:center;font-size:1.05rem;margin-top:.15rem}
+  .repro:not(.ok) .seal{color:var(--caution-ink)}
+  .repro h3{margin:.15rem 0 0;font-size:1.15rem}
+  .repro .body{min-width:0;flex:1}
+  .fold{border-top:1px solid var(--rule-strong);margin-top:.2rem}
+  .fold>summary{list-style:none;display:flex;align-items:center;gap:.6rem;padding:.9rem 0;font-weight:650;font-size:1.02rem}
+  .fold>summary::-webkit-details-marker{display:none}
+  .chev{width:.6rem;height:.6rem;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(-45deg);transition:transform .15s;flex:none;margin:0 .2rem 0 .1rem}
+  .fold[open]>summary .chev{transform:rotate(45deg)}
+  .fold>summary .sum{margin-left:auto;font:400 .8125rem var(--mono);color:var(--muted);text-align:right}
+  .fold>.body{padding:0 0 1.2rem}
+  .res-sec{margin-top:2rem}
+  .res-sec>h3{margin:0 0 .5rem;font-size:1.05rem;border-top:1px solid var(--rule-strong);padding-top:.9rem}
+  .cr{padding:1rem 0;border-top:1px solid var(--rule)}
+  .cr:first-of-type{border-top:0;padding-top:.3rem}
+  .cr-h{display:flex;flex-wrap:wrap;gap:.3rem .8rem;align-items:baseline}
+  .cr-h .rk{font:600 .8125rem var(--mono);color:var(--muted)}
+  .cr-h .cv{font:600 1.15rem var(--mono)}
+  .cr-h .chip{margin-left:auto}
+  .cr ul{margin:.4rem 0 0;padding-left:1.2rem;font-size:.9rem}
+  .cr .line{font-size:.875rem;color:var(--muted);margin:.25rem 0 0}
+  .checks{list-style:none;padding:0!important;margin:.3rem 0 .8rem}
+  .checks li{display:flex;flex-wrap:wrap;gap:.2rem .7rem;align-items:baseline;padding:.3rem 0;border-top:1px solid var(--rule);font-size:.84rem}
+  .checks .id{font:600 .78rem var(--mono);min-width:11rem}
+  .checks .sm{flex:1 1 14rem;color:var(--muted)}
+  .pv{padding:1.1rem 0;border-top:1px solid var(--rule-strong)}
+  .pv:first-of-type{border-top:0}
+  .pv-h{display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:baseline}
+  .pv-h .chip{margin-left:auto}
+  .pv-h .cv{font:600 1.15rem var(--mono)}
+  .pv dl.kv{font-size:.86rem;margin:.5rem 0 0}
+  .pv .quote{margin:.3rem 0 .5rem}
+  .pv ul.plain{list-style:none;margin:0;padding:0}
+  .pv ul.plain li{margin:.15rem 0}
+  .files{list-style:none;margin:.2rem 0;padding:0}
+  .files li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:.2rem 1rem;align-items:center;padding:.55rem 0;border-top:1px solid var(--rule);font-size:.88rem}
+  .files li:first-child{border-top:0}
+  .files .fn{font:600 .875rem var(--mono);overflow-wrap:anywhere}
+  .files .fm{font:.75rem var(--mono);color:var(--muted);grid-column:1/-1}
+  .files .fa{display:flex;gap:.9rem;font-size:.875rem;font-weight:600}
+  .files li.second .fn{font-weight:500;color:var(--muted)}
+  .fgroup{font-size:.8125rem;color:var(--muted);margin:.8rem 0 .1rem}
+
+  /* ---------- demo ---------- */
+  .demo{margin-top:4rem;padding-top:1.1rem;border-top:1px solid var(--rule-strong);display:flex;flex-wrap:wrap;gap:.8rem 1.5rem;align-items:center}
+  .demo .d-t{flex:1 1 22rem;font-size:.9rem;color:var(--muted)}
+  .demo .d-t strong{color:var(--ink);display:block;font-size:.95rem}
+  #msg{font-size:.875rem;color:var(--muted);margin-top:.8rem;flex-basis:100%}
+  #msg .note{margin:0}
+
+  /* ---------- narrow screens ---------- */
+  @media (max-width:40rem){
+    .wrap,.pipe{padding-left:1rem;padding-right:1rem}
+    .descr{border-left:0;padding-left:0;flex-basis:100%;order:2}
+    .status{margin-left:0;order:3;flex-basis:100%}
+    .opts .lab{flex-basis:100%}
+    .pipe li:not([aria-current=step]) .lbl{display:none}
+    .pipe li+li::before{margin-right:0}
+    #question{font-size:1.2rem;min-height:9.5rem;padding:.9rem}
+    .cand{grid-template-columns:minmax(0,1fr)}
+    .cand .val{font-size:1.4rem}
+    dl.kv{grid-template-columns:minmax(0,1fr);gap:.05rem}
+    dl.kv dd{margin-bottom:.5rem}
+    .btn.primary,.btn.run{width:100%}
+    .choose .act,.opts .act{flex:1 1 auto}
+    .act .face{justify-content:center;width:100%}
+    .override>div+div{border-left:0;border-top:1px solid var(--ink)}
+    .param-h .chip{margin-left:0}
+    .files li{grid-template-columns:minmax(0,1fr)}
+    .files .fa{margin-top:.2rem}
+    .checks .id{min-width:0}
+    .stage-h{font-size:1.2rem}
+    .key{padding:1.1rem}
+    .repro{padding:.9rem}
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 28 28" role="img" aria-label="EcoBackfire mark">
+        <rect width="28" height="28" rx="5" fill="#0E6A5C"/>
+        <line x1="4" y1="11" x2="24" y2="11" stroke="#FFFFFF" stroke-width="1.2" stroke-dasharray="2 2.4" opacity=".8"/>
+        <path d="M5 7 L12 20 L23 5.5" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="wm">EcoBackfire</span>
+    </div>
+    <span class="descr">Evidence-aware backfire research</span>
+    <span id="webstatus" class="status" role="status" data-s="checking"><i class="dot" aria-hidden="true"></i><span id="webstatus-text">Checking research engine…</span></span>
+  </div>
+</header>
+
+<nav aria-label="Workflow">
+  <ol class="pipe" id="flow">
+    <li data-p="1"><b>1</b><span class="lbl">Question</span></li>
+    <li data-p="2"><b>2</b><span class="lbl">Evidence</span></li>
+    <li data-p="3"><b>3</b><span class="lbl">Human review</span></li>
+    <li data-p="4"><b>4</b><span class="lbl">Model</span></li>
+    <li data-p="5"><b>5</b><span class="lbl">Result</span></li>
+  </ol>
+</nav>
+
+<main class="wrap">
+
+  <!-- 01 / QUESTION -->
+  <section class="stage" aria-labelledby="h-question" style="margin-top:1rem">
+    <h2 class="stage-h" id="h-question" tabindex="-1"><span class="num">01 / QUESTION</span>Research question</h2>
+    <label class="vh" for="question">Research question</label>
+    <textarea id="question" maxlength="600" placeholder="Could improving energy efficiency increase total energy use?">Can improving the efficiency of household air conditioners in India increase total electricity-related emissions?</textarea>
+    <div class="q-meta" aria-hidden="true"><span id="qcount">0 / 600</span></div>
+    <p class="lede">EcoBackfire researches the evidence, lets you review the assumptions, then runs the analysis.</p>
+    <div class="actions">
+      <button id="research" class="btn primary" type="button">Research question →</button>
+      <span class="hint">Nothing is calculated until you confirm.</span>
+    </div>
+    <div id="rmsg" role="alert"></div>
+    <p class="readnote"><strong>How to read the results.</strong> Findings are <em>model-derived and conditional</em>: they describe a simple
+      rebound model, not a measured real system. Researched values are <em>candidates</em> found by automatic web search:
+      a citation exists, <strong>nobody has checked it</strong> against the value. Values you override are your own
+      assumptions, never external facts. Inputs without a source stay <em>illustrative placeholders</em>.
+      <code>evidence_insufficient</code> means “the available evidence cannot yet confirm or challenge this” &mdash; it does
+      <strong>not</strong> mean the finding is false.</p>
+  </section>
+
+  <!-- 02 / EVIDENCE: research in progress -->
+  <section id="needed-wrap" class="stage" aria-labelledby="h-evidence" hidden>
+    <h2 class="stage-h" id="h-evidence" tabindex="-1"><span class="num">02 / EVIDENCE</span>Researching</h2>
+    <div class="panel">
+      <span class="tag accent">Researching</span>
+      <ul class="prog" id="rprog" aria-live="polite"></ul>
+      <p class="muted small" id="needed-note" style="margin:.8rem 0 0"></p>
+    </div>
+    <h3 class="sub">Parameters the engine needs</h3>
+    <div id="needed"></div>
+  </section>
+
+  <!-- 02 / EVIDENCE REVIEW + 03 / CONFIRMATION -->
+  <div id="review-wrap" hidden>
+    <section class="stage" aria-labelledby="h-review">
+      <h2 class="stage-h" id="h-review" tabindex="-1"><span class="num">02 / EVIDENCE</span>Evidence review</h2>
+      <div class="find-h">
+        <span class="tag accent">Research findings</span>
+        <span>Review the values found by the research agent before running EcoBackfire.</span>
+      </div>
+      <div id="scope" class="scope"></div>
+      <p class="muted small" style="margin:0 0 .4rem">Choose, for every parameter, which value the engine should use. Where sources disagree, all are shown and
+        <strong>you</strong> choose. “Evidence insufficient” means no number was found; none is invented.</p>
+      <div id="review"></div>
+    </section>
+
+    <section class="stage" aria-labelledby="h-confirm">
+      <h2 class="stage-h" id="h-confirm" tabindex="-1"><span class="num">03 / CONFIRMATION</span>Confirm and run</h2>
+      <div id="summary"></div>
+      <div id="blockers"></div>
+      <div class="actions">
+        <button id="confirm" class="btn run" type="button" disabled aria-describedby="blockers">Run EcoBackfire →</button>
+      </div>
+      <div id="confirmbox" class="confirm-box" tabindex="-1" role="group" aria-labelledby="cb-t" hidden>
+        <strong id="cb-t">Run the EcoBackfire engine with exactly these parameters?</strong>
+        <div class="muted small" style="margin-top:.3rem">The engine will run discovery → falsification → robustness → classification and write reproducible artifacts. Overrides will be recorded as your assumptions.</div>
+        <div class="actions"><button id="yes" class="btn primary" type="button">Yes, run EcoBackfire</button> <button id="no" class="btn" type="button">Cancel</button></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 04 / ANALYSIS -->
+  <section id="running" class="stage" aria-labelledby="h-run" hidden>
+    <h2 class="stage-h" id="h-run" tabindex="-1"><span class="num">04 / ANALYSIS</span>Analysis</h2>
+    <div class="panel">
+      <span class="tag accent">Running EcoBackfire</span>
+      <ul class="prog" aria-live="polite">
+        <li data-st="done">Decisions confirmed and sent to the engine</li>
+        <li data-st="active" id="runphase">Engine running <span class="t"><span id="elapsed">0</span> s</span></li>
+      </ul>
+      <p class="muted small" style="margin:.9rem 0 .3rem">The engine executes, in this order:</p>
+      <ol class="small muted" style="margin:0;padding-left:1.3rem">
+        <li>Analyzing candidates (discovery)</li><li>Falsification</li><li>Testing robustness</li><li>Classification</li>
+        <li>Generating reproducible artifacts</li><li>Reproducibility re-run</li>
+      </ol>
+      <p class="muted small" style="margin:.8rem 0 0">The engine does not report live per-stage progress, so this page does not pretend to; the real per-stage statuses and evaluation counts are shown with the results.</p>
+    </div>
+  </section>
+
+  <!-- 05 / RESULTS -->
+  <section id="out" class="stage" aria-labelledby="h-results" hidden>
+    <h2 class="stage-h" id="h-results" tabindex="-1"><span class="num">05 / RESULTS</span>Results</h2>
+    <div id="keyresult"></div>
+    <div id="mission"></div>
+    <div id="repro"></div>
+
+    <div id="prov-wrap" class="res-sec" hidden>
+      <h3>Parameters used &amp; provenance</h3>
+      <div id="prov"></div>
+    </div>
+
+    <div class="res-sec"><h3>Candidates</h3><div id="cands"></div></div>
+
+    <div class="res-sec">
+      <details class="fold"><summary><i class="chev" aria-hidden="true"></i>Backfire hunt (discovery)</summary><div class="body" id="hunt"></div></details>
+      <details class="fold"><summary><i class="chev" aria-hidden="true"></i>Evidence transparency</summary><div class="body" id="evidence"></div></details>
+      <details class="fold"><summary><i class="chev" aria-hidden="true"></i>Computation budget</summary><div class="body" id="budget"></div></details>
+      <details class="fold"><summary><i class="chev" aria-hidden="true"></i>Pipeline stages</summary><div class="body" id="stages"></div></details>
+      <details class="fold" open><summary><i class="chev" aria-hidden="true"></i>Limitations &amp; warnings</summary><div class="body" id="limits"></div></details>
+      <details class="fold" open><summary><i class="chev" aria-hidden="true"></i>Artifacts</summary><div class="body" id="artifacts"></div></details>
+    </div>
+  </section>
+
+  <!-- demo (secondary) -->
+  <div class="demo">
+    <div class="d-t"><strong>Or try the fixed example</strong>
+      A canonical mission with no research step. Only the grid emissions factor <code>f</code> comes from a real dataset; every other input is illustrative. Takes several seconds.</div>
+    <button id="run" class="btn quiet" type="button">Run Demo Mission</button>
+    <div id="msg" role="status" aria-live="polite"></div>
+  </div>
+</main>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+// All server-supplied text is inserted with textContent (never innerHTML).
+function el(tag, text, cls){const e=document.createElement(tag); if(text!==undefined&&text!==null) e.textContent=String(text); if(cls) e.className=cls; return e;}
+function add(parent, ...kids){kids.forEach(k=>{ if(k===null||k===undefined||k===false) return; parent.appendChild(k instanceof Node?k:document.createTextNode(String(k))); }); return parent;}
+function h(tag, cls, ...kids){return add(el(tag,null,cls), ...kids);}
+function note(parent, kind, text){const n=el("div",null,"note "+(kind||"")); if(text instanceof Node) n.appendChild(text); else n.textContent=text; parent.appendChild(n); return n;}
+function chip(text, kind, mono){return el("span", text, "chip "+(kind||"")+(mono?" m":""));}
+function dl(pairs, cls){
+  const d=el("dl",null,"kv "+(cls||""));
+  for(const [k,v] of pairs){d.appendChild(el("dt",k)); const dd=el("dd"); if(v instanceof Node) dd.appendChild(v); else dd.textContent=(v===undefined||v===null||v==="")?"—":String(v); d.appendChild(dd);}
+  return d;
+}
+function tbl(head, rows, cls){
+  const wrap=el("div",null,"tw"), t=el("table",null,cls||"ledger"), tr=el("tr");
+  head.forEach(x=>tr.appendChild(el("th",x))); const th=el("thead"); th.appendChild(tr); t.appendChild(th);
+  const tb=el("tbody"); rows.forEach(r=>{const row=el("tr"); r.forEach(c=>{const td=el("td"); if(c instanceof Node) td.appendChild(c); else td.textContent=(c===undefined||c===null)?"—":String(c); row.appendChild(td);}); tb.appendChild(row);});
+  t.appendChild(tb); wrap.appendChild(t); return wrap;
+}
+function clear(...ids){ids.forEach(i=>$(i).replaceChildren());}
+const fmt = x => (typeof x==="number") ? Number(x.toPrecision(6)).toString() : x;
+const fmtBytes = n => n<1024? n+" B" : n<1048576? (n/1024).toFixed(1)+" kB" : (n/1048576).toFixed(2)+" MB";
+function hashEl(s, cut){ if(!s) return document.createTextNode("—"); const c=el("code",s,"hash"+(cut?" cut":"")); c.title=s; return c; }
+function domainOf(url){ try{return new URL(url).host;}catch(e){return null;} }
+// Only http(s) links are ever made clickable; opened without referrer/opener.
+function safeLink(url, text){
+  let ok=false; try{const u=new URL(url); ok=(u.protocol==="https:"||u.protocol==="http:");}catch(e){}
+  if(!ok) return el("span", url? "(invalid URL withheld)" : "(no URL)");
+  const a=el("a", text||url); a.href=url; a.target="_blank"; a.rel="noopener noreferrer nofollow"; return a;
+}
+const PIPE={1:1,2:2,3:3,4:3,5:4,6:5};
+function setStep(n){const p=PIPE[n]; document.querySelectorAll("#flow li").forEach(li=>{const i=Number(li.dataset.p); li.classList.toggle("done", i<p); if(i===p) li.setAttribute("aria-current","step"); else li.removeAttribute("aria-current");});}
+function reveal(sec, headId){ sec.hidden=false; sec.scrollIntoView(); const hd=$(headId); if(hd) hd.focus({preventScroll:true}); }
+async function jfetch(url, opts){
+  const resp=await fetch(url, opts); let data=null; try{data=await resp.json();}catch(e){}
+  if(!resp.ok){const err=new Error((data&&(data.detail||(data.messages||[]).join(" ")))||("HTTP "+resp.status)); err.status=resp.status; err.data=data; throw err;}
+  return data;
+}
+// chip colour only; the chip text is always the engine's own identifier
+function clsKind(c){c=String(c||""); if(/insufficient/.test(c)) return "insufficient"; if(/sensitive|dependent|inconclusive/.test(c)) return "caution"; if(/robust/.test(c)) return "sourced"; if(/eliminated|falsif/.test(c)) return "override"; return "";}
+const CHECK_KIND={passed:"sourced", failed:"fail", limits_claim:"caution", inconclusive:"caution", skipped:"insufficient"};
+
+function summarizeChecks(view){
+  if(!view) return "not available";
+  if(view.status!=="assessed") return "not assessed";
+  const c=view.checks||[], n=k=>c.filter(x=>x.status===k).length;
+  return `assessed: ${n("passed")} passed, ${n("failed")} failed, ${n("limits_claim")} limits claim, ${n("inconclusive")} inconclusive, ${n("skipped")} skipped (of ${c.length})`;
+}
+function checksList(view){
+  if(!view||view.status!=="assessed") return el("p","not assessed","line");
+  const ul=el("ul",null,"checks");
+  (view.checks||[]).forEach(c=>{const li=el("li"); li.appendChild(el("span",c.check_id,"id")); li.appendChild(chip(c.status.replace(/_/g," "),CHECK_KIND[c.status]||"")); li.appendChild(el("span",c.summary,"sm")); ul.appendChild(li);});
+  return ul;
+}
+
+// ================================================================== results (shared by demo and reviewed runs)
+const SYM={epsilon:"ε", eta:"η", phi:"φ"};
+function renderKey(r, cls){
+  const K=$("keyresult"); K.replaceChildren();
+  const box=h("div","key"); K.appendChild(box);
+  const sid=r.backfire&&r.backfire.strongest_finding;
+  const c=(r.candidates||[]).find(x=>x.candidate.candidate_id===sid)||(r.candidates||[])[0]||null;
+  if(!c){
+    add(box, h("div","kind", el("span","No result","tag")), el("p","No candidates were produced.","cid"));
+    if(r.scientific_result) box.appendChild(el("p",r.scientific_result,"eng"));
+    return;
+  }
+  const k=c.candidate, dec=cls[k.candidate_id];
+  const kindRow=h("div","kind", el("span",k.kind==="breakeven"?"Break-even":k.kind,"tag accent"), el("span","Strongest finding · model-derived, conditional","tag"));
+  const big=el("p",null,"big"); big.appendChild(document.createTextNode((SYM[k.variable_id]||k.variable_id)+"* = "+fmt(k.value))); big.appendChild(el("span",k.unit,"u"));
+  const side=k.beneficial_side==="below"?" · beneficial below, not beneficial above":k.beneficial_side==="above"?" · beneficial above, not beneficial below":"";
+  add(box, kindRow, big, el("p",k.candidate_id+side,"cid mono"));
+  const cl=(dec&&dec.classification)||c.robustness_classification||"not classified";
+  const v=h("div","verdict"); const vl=h("div","vl", el("span","Classification","tag"), chip(cl,clsKind(cl),true)); v.appendChild(vl);
+  if(/insufficient/.test(String(cl))){
+    const p=el("p"); p.appendChild(el("span","Not the same as false. ","not"));
+    p.appendChild(document.createTextNode("The available evidence cannot yet confirm or challenge this break-even. It is not a failed hypothesis, and it does not mean the break-even is false."));
+    v.appendChild(p);
+  }
+  if(dec){ v.appendChild(el("p",`numerical class: ${dec.numerical_class} · evidence class: ${dec.evidence_class} · rule: ${dec.rule_id}`,"line mono small muted"));
+    if((dec.reasons||[]).length){const ul=el("ul",null,"small muted"); dec.reasons.forEach(x=>ul.appendChild(el("li",x))); v.appendChild(ul);} }
+  box.appendChild(v);
+  if(r.scientific_result) box.appendChild(el("p",r.scientific_result,"eng"));
+}
+
+function renderMission(r, d){
+  const m=$("mission"), bu=r.budget_usage;
+  const pairs=[["Mission",r.mission.title],["Mission id",r.mission.mission_id],["Status",r.status+(r.reason?` (reason: ${r.reason})`:"")],
+    ["Model",r.mission.model_ref],["Candidates",r.candidates.length],["Run id",d.run_id]];
+  if(bu) pairs.push(["Model evaluations",bu.actual_model_evaluations+" of "+bu.configured_max_model_evaluations+" allowed"]);
+  if(r.backfire) pairs.push(["Discovery evaluations",r.backfire.evaluations_performed+" of "+r.backfire.max_evaluations+" cap"]);
+  m.appendChild(dl(pairs,"meta"));
+  if(r.failure) note(m,"error",`Failure at stage '${r.failure.stage}': ${r.failure.message}`);
+}
+
+function renderRepro(r){
+  const rp=r.reproducibility, exact=rp.check_outcome==="reproduced_exactly", R=$("repro");
+  const w=h("div","repro"+(exact?" ok":"")); w.appendChild(el("span",exact?"✓":"!","seal"));
+  const body=h("div","body", el("span","Reproducibility","tag "+(exact?"accent":"caution")), el("h3",exact?"Reproduced exactly":"Reproducibility check: "+rp.check_outcome));
+  body.appendChild(el("p",exact?"The whole pipeline was executed a second time and the scientific results were byte-identical.":"See details below.","muted small"));
+  w.appendChild(body); R.appendChild(w);
+  R.appendChild(dl([["check_outcome",rp.check_outcome],["Mission SHA-256",hashEl(rp.mission_sha256)],["Plan SHA-256",hashEl(rp.plan_sha256)],
+    ["Scientific results SHA-256",hashEl(rp.scientific_results_sha256)],["Datasets",(rp.datasets||[]).join("; ")||"none"],
+    ["Seed",rp.seed===null?"none (no randomness used)":rp.seed],["Command",el("code",rp.reproduce_command,"hash")]],"meta"));
+  (rp.check_details||[]).forEach(x=>R.appendChild(el("p",x,"muted small")));
+}
+
+function renderCands(r, cls){
+  const C=$("cands");
+  const fal=Object.fromEntries((r.falsification||[]).map(x=>[x.candidate_id,x]));
+  const rob=Object.fromEntries((r.robustness||[]).map(x=>[x.candidate_id,x]));
+  if(!r.candidates.length){ C.appendChild(el("p","No candidates were produced.")); return; }
+  r.candidates.forEach(c=>{
+    const k=c.candidate, id=k.candidate_id, dec=cls[id];
+    const cl=(dec&&dec.classification)||c.robustness_classification||"not classified";
+    const a=h("article","cr");
+    a.appendChild(h("div","cr-h", el("span","#"+c.rank,"rk"), el("strong",id,"mono"), el("span",(SYM[k.variable_id]||k.variable_id)+"* = "+fmt(k.value)+" "+k.unit,"cv"), chip(cl,clsKind(cl),true)));
+    a.appendChild(el("p","Falsification — "+summarizeChecks(fal[id]),"line"));
+    a.appendChild(el("p","Robustness — "+summarizeChecks(rob[id]),"line"));
+    if(dec&&(dec.reasons||[]).length){const ul=el("ul"); dec.reasons.forEach(x=>ul.appendChild(el("li",x))); a.appendChild(ul);}
+    const more=el("details",null,"more"); more.appendChild(el("summary","Checks, scores and classification detail"));
+    more.appendChild(dl([["Attention score (not a probability)",fmt(c.ranking_score)],["Claim type",c.claim_type],["Evidence status",dec?dec.evidence_class:"—"],
+      ["Numerical class",dec?dec.numerical_class:"—"],["Rule",dec?dec.rule_id:"—"],["Parameter",k.variable_id],["Hypothesis",k.hypothesis]],"meta"));
+    if(dec&&(dec.not_assessed||[]).length) more.appendChild(el("p","Not assessed: "+dec.not_assessed.join(", "),"muted small"));
+    more.appendChild(el("p","Falsification checks","small")); more.appendChild(checksList(fal[id]));
+    more.appendChild(el("p","Robustness checks","small")); more.appendChild(checksList(rob[id]));
+    a.appendChild(more); C.appendChild(a);
+  });
+  if(r.candidates.some(c=>{const d=cls[c.candidate.candidate_id]; return d && /insufficient/.test(String(d.classification)+String(d.evidence_class));}))
+    note(C,"caution","evidence_insufficient means the available evidence cannot yet confirm or challenge this candidate. It is NOT a failed hypothesis and does NOT mean the candidate is false.");
+}
+
+function renderHunt(r){
+  const H=$("hunt");
+  if(!r.backfire){ H.appendChild(el("p","No backfire-hunt summary in this result.")); return; }
+  const b=r.backfire;
+  H.appendChild(dl([["Hunt status",b.status],["Baseline regime",b.baseline&&b.baseline.regime],["Parameters searched",(b.parameters_searched||[]).join(", ")],
+    ["Evaluations",`${b.evaluations_performed} / ${b.max_evaluations}`],["Crossings found",b.candidates_found],["Falsified",(b.candidates_falsified||[]).length],
+    ["Survived robustness",(b.survived_robustness||[]).length],["Evidence-sensitive",(b.evidence_sensitive||[]).length]],"meta"));
+  if(b.strongest_finding_statement) note(H,"",b.strongest_finding_statement);
+}
+
+function renderEvidence(r){
+  const E=$("evidence"), es=r.evidence_summary;
+  if(es){ note(E,"caution",es.statement);
+    E.appendChild(dl([["Candidates total",es.total_candidates],["Evaluated",es.candidates_evaluated],
+      ["With documented evidence variation",es.candidates_with_evidence_variation],["evidence_insufficient",es.evidence_insufficient],
+      ["Source-dependent",es.source_dependent],["Eliminated by evidence",es.eliminated_by_evidence],["Evidence-robust",es.evidence_robust],
+      ["Inputs WITHOUT registry evidence (illustrative)",(es.inputs_without_registry_evidence||[]).join(", ")||"none"]],"meta"));
+    if((es.evidence_available||[]).length) E.appendChild(tbl(["Input","State","Evidence id","Status","Sources","Documented ranges","Scenarios"],
+      es.evidence_available.map(a=>[a.variable_id,a.state,a.evidence_id,a.status,a.n_sources,a.n_documented_ranges,a.n_scenarios])));
+  }
+  const items=r.evidence_items||[];
+  if(items.length){ const dt=el("details",null,"more"); dt.appendChild(el("summary","Evidence items / provenance ("+items.length+", raw)"));
+    items.forEach(it=>dt.appendChild(el("pre",JSON.stringify(it,null,2)))); E.appendChild(dt); }
+  if(es&&es.definitions){ const dt=el("details",null,"more"); dt.appendChild(el("summary","Definitions"));
+    dt.appendChild(dl(Object.entries(es.definitions),"meta")); E.appendChild(dt); }
+}
+
+function renderBudget(r){
+  const B=$("budget"), bu=r.budget_usage;
+  if(bu){ B.appendChild(dl([["Configured max model evaluations",bu.configured_max_model_evaluations],
+    ["Actual model evaluations (first execution)",bu.actual_model_evaluations],["Budget reached",String(bu.budget_reached)],
+    ["Fraction used",bu.fraction_used===null?null:fmt(bu.fraction_used)]],"meta")); note(B,"",bu.statement); }
+  if(r.backfire) B.appendChild(el("p",`Discovery evaluations: ${r.backfire.evaluations_performed} of ${r.backfire.max_evaluations} cap.`,"muted small"));
+  if(r.analysis_settings) B.appendChild(el("p","Challenge scope: "+r.analysis_settings.scope_statement,"muted small"));
+}
+
+function renderStages(r){
+  $("stages").appendChild(tbl(["Stage","Status","Detail"],(r.stages||[]).map(s=>[el("span",s.stage,"mono"),chip(s.status,s.status==="ok"?"sourced":(s.status==="failed"?"fail":"insufficient")),s.detail])));
+}
+
+function renderLimits(r){
+  const L=$("limits");
+  if((r.warnings||[]).length){L.appendChild(el("h4","Warnings","sub")); const ul=el("ul"); r.warnings.forEach(x=>ul.appendChild(el("li",x))); L.appendChild(ul);}
+  if((r.limitations||[]).length){L.appendChild(el("h4","Limitations","sub")); const ul=el("ul"); r.limitations.forEach(x=>ul.appendChild(el("li",x))); L.appendChild(ul);}
+  if(r.verification_disclosure) L.appendChild(el("p","Verification: "+r.verification_disclosure.statement,"muted small"));
+}
+
+const PRIMARY_FILES=["result.json","verification.json","manifest.json","report.md","config.json"];
+// Artifact contents come back inside the run response (d.artifact_contents), so View/Download use a local blob: URL and do
+// not depend on a later request reaching the server instance that ran the engine. If the browser cannot make blob URLs, or
+// the response carries no copy of a file, the link falls back to the server's run-scoped endpoint (urlFor), which answers
+// 404 when that instance no longer holds the file.
+let _blobUrls=[];
+function artifactHref(d, name, urlFor){
+  const txt=d.artifact_contents&&d.artifact_contents[name];
+  if(typeof txt==="string" && window.Blob && window.URL && typeof URL.createObjectURL==="function"){
+    try{ const u=URL.createObjectURL(new Blob([txt],{type:name.endsWith(".json")?"application/json":"text/plain;charset=utf-8"})); _blobUrls.push(u); return u; }catch(e){ /* fall through */ }
+  }
+  return urlFor(name);
+}
+function renderArtifacts(d, urlFor){
+  const A=$("artifacts");
+  _blobUrls.forEach(u=>{ try{ URL.revokeObjectURL(u); }catch(e){} }); _blobUrls=[];
+  if(!d.artifacts.length){ A.appendChild(el("p","No artifacts were written.")); return; }
+  const mk=(a,second)=>{
+    const li=el("li",null,second?"second":""); li.appendChild(el("span",a.name,"fn"));
+    const href=artifactHref(d,a.name,urlFor);
+    const fa=el("span",null,"fa"); const v=el("a","View"); v.href=href; v.target="_blank"; v.rel="noopener noreferrer";
+    const dn=el("a","Download"); dn.href=href; dn.setAttribute("download",a.name); dn.setAttribute("aria-label","Download "+a.name);
+    v.setAttribute("aria-label","View "+a.name); fa.appendChild(v); fa.appendChild(dn); li.appendChild(fa);
+    const m=el("span",null,"fm"); m.appendChild(document.createTextNode(fmtBytes(a.bytes)+" · sha256 ")); m.appendChild(a.sha256?hashEl(a.sha256,true):document.createTextNode("—")); li.appendChild(m); return li; };
+  const prim=PRIMARY_FILES.map(n=>d.artifacts.find(a=>a.name===n)).filter(Boolean), rest=d.artifacts.filter(a=>!PRIMARY_FILES.includes(a.name));
+  const u1=el("ul",null,"files"); prim.forEach(a=>u1.appendChild(mk(a,false))); A.appendChild(u1);
+  if(rest.length){ A.appendChild(el("p","Other files written by the engine","fgroup")); const u2=el("ul",null,"files"); rest.forEach(a=>u2.appendChild(mk(a,true))); A.appendChild(u2); }
+}
+
+function render(d, urlFor){
+  const r=d.result; $("out").hidden=false;
+  clear("keyresult","mission","repro","cands","hunt","evidence","budget","stages","limits","artifacts");
+  $("prov-wrap").hidden=true;
+  const cls=Object.fromEntries((r.classification||[]).map(x=>[x.candidate_id,x.decision]));
+  renderKey(r,cls); renderMission(r,d); renderRepro(r); renderCands(r,cls); renderHunt(r);
+  renderEvidence(r); renderBudget(r); renderStages(r); renderLimits(r); renderArtifacts(d,urlFor);
+  setStep(6);
+}
+
+// ================================================================== demo mission (unchanged behaviour)
+async function runDemo(){
+  const btn=$("run"); btn.disabled=true; $("msg").textContent="Running the mission through the EcoBackfire engine…";
+  try{
+    const resp=await fetch("/api/mission/run",{method:"POST"});
+    if(!resp.ok) throw new Error("server returned HTTP "+resp.status);
+    render(await resp.json(), n=>"/api/artifacts/"+encodeURIComponent(n));
+    $("msg").textContent="Done. Values below come from the engine run, not from the page.";
+    reveal($("out"),"h-results");
+  }catch(e){
+    $("msg").textContent=""; note($("msg"),"error","Run failed: "+e.message);
+  }finally{ btn.disabled=false; }
+}
+$("run").addEventListener("click", runDemo);
+
+// ================================================================== header status + question box
+setStep(1);
+fetch("/api/web/status").then(r=>r.json()).then(s=>{
+  const w=$("webstatus"), t=$("webstatus-text");
+  if(s.web_research_available){ w.dataset.s="ready"; t.textContent="Research engine ready · web research available"; w.title="Search provider: "+s.provider; }
+  else { w.dataset.s="warn"; t.textContent="Research engine ready · web research unavailable"; w.title=s.message; }
+}).catch(()=>{ $("webstatus").dataset.s="warn"; $("webstatus-text").textContent="Status unavailable"; });
+const qcount=()=>{$("qcount").textContent=$("question").value.length+" / 600";};
+$("question").addEventListener("input",qcount); qcount();
+
+// ================================================================== research workflow
+const S={report:null, signature:null, dec:{}};
+const STATUS_LABEL={sourced:"SOURCED", sourced_range:"SOURCED RANGE", multiple_sources:"MULTIPLE SOURCES", conflicting:"CONFLICTING EVIDENCE",
+  missing:"EVIDENCE INSUFFICIENT", not_researched:"NOT RESEARCHED", search_failed:"SEARCH FAILED"};
+
+// research progress shows only what the page really knows: parameter list loaded, request in flight, response received
+const RP={st:["pending","pending","pending"], secs:0, timer:null};
+function drawRP(){
+  const L=$("rprog"); L.replaceChildren();
+  ["Identifying model inputs","Searching evidence and comparing sources","Preparing review"].forEach((t,i)=>{
+    const li=el("li",t); li.dataset.st=RP.st[i];
+    if(i===1&&RP.st[i]==="active") li.appendChild(el("span",RP.secs+" s","t"));
+    L.appendChild(li); });
+}
+async function startResearch(){
+  const q=$("question").value.trim(); clear("rmsg");
+  if(q.length<10){ note($("rmsg"),"error","Please enter a research question (at least 10 characters)."); $("question").focus(); return; }
+  $("research").disabled=true; setStep(2);
+  $("review-wrap").hidden=true; $("out").hidden=true; $("prov-wrap").hidden=true; $("running").hidden=true; $("confirmbox").hidden=true;
+  // show the parameters the engine needs while the research runs
+  clear("needed"); $("needed-note").textContent="This can take up to a minute. No engine calculation is running. The server returns one result when research is done, so search and comparison are shown as one step.";
+  RP.st=["active","pending","pending"]; RP.secs=0; drawRP(); reveal($("needed-wrap"),"h-evidence");
+  try{
+    const need=await jfetch("/api/research/parameters");
+    $("needed").appendChild(tbl(["Parameter","Meaning","Unit"], need.parameters.map(p=>[el("span",p.id,"mono"),p.label,el("span",p.unit,"mono")])));
+    RP.st[0]="done";
+  }catch(e){ RP.st[0]="pending"; }
+  RP.st[1]="active"; drawRP(); clearInterval(RP.timer); RP.timer=setInterval(()=>{RP.secs++; drawRP();},1000);
+  try{
+    const data=await jfetch("/api/research",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:q})});
+    clearInterval(RP.timer); RP.st=["done","done","done"]; drawRP();
+    S.report=data.report; S.signature=data.signature; initDecisions(); renderReview(); setStep(3);
+    $("needed-wrap").hidden=true; reveal($("review-wrap"),"h-review");
+  }catch(e){
+    clearInterval(RP.timer); $("needed-note").textContent=""; RP.st[1]="pending"; drawRP();
+    note($("rmsg"),"error","Research failed: "+e.message);
+  }finally{ $("research").disabled=false; }
+}
+$("research").addEventListener("click", startResearch);
+
+// ---- decisions: one per parameter; nothing is preselected when sources conflict or no source exists
+function initDecisions(){
+  S.dec={};
+  S.report.parameters.forEach(p=>{
+    const d={action:null, candidate_id:null, value:"", low:"", high:"", note:""};
+    if((p.status==="sourced"||p.status==="sourced_range"||p.status==="multiple_sources") && p.candidates.length){
+      d.action="accept"; d.candidate_id=p.candidates[0].candidate_id;
+    }
+    S.dec[p.id]=d;
+  });
+}
+function stated(c){
+  if(c.range) return fmt(c.range[0])+" – "+fmt(c.range[1]);
+  return fmt(c.value);
+}
+// the value in the model's own unit, so that sources can be compared like for like
+function modelVal(p,c){
+  if(c.range){ const lo=c.canonical_low!==undefined?c.canonical_low:c.range[0], hi=c.canonical_high!==undefined?c.canonical_high:c.range[1]; return fmt(lo)+" – "+fmt(hi); }
+  return fmt(c.base_canonical!==undefined?c.base_canonical:c.value);
+}
+function sideNotes(p,c){
+  const out=[];
+  if(c.unit!==p.unit) out.push("stated as "+stated(c)+" "+c.unit);
+  if(c.range) out.push("base value used: "+fmt(c.base_value)+" "+c.unit+" — "+c.base_value_basis+((c.unit!==p.unit&&c.base_canonical!==undefined)?" (= "+fmt(c.base_canonical)+" "+p.unit+")":""));
+  return out;
+}
+function candChip(c){
+  if(c.evidence_status==="sourced_unreviewed") return chip(c.range?"SOURCED RANGE · UNREVIEWED":"SOURCED · UNREVIEWED","sourced");
+  return chip(String(c.evidence_status).replace(/_/g," ").toUpperCase(),"sourced");
+}
+function sourceBlock(c){
+  const s=c.source, b=el("div");
+  const t=el("div",null,"src-t"); t.appendChild(safeLink(s.url,s.title)); t.title=s.title; b.appendChild(t);
+  const bits=[]; if(s.publisher) bits.push(s.publisher); bits.push(s.published?("published "+s.published):"year not stated");
+  const dom=domainOf(s.url); if(dom && dom!==s.publisher) bits.push(dom);
+  bits.push(s.tier==="authoritative"?"authoritative by domain":"general web source"); if(s.retrieved_on) bits.push("retrieved "+s.retrieved_on);
+  b.appendChild(el("p",bits.join(" · "),"src-m"));
+  if(c.matched_text){ const m=el("p",null,"matched"); m.appendChild(document.createTextNode("Extracted: ")); m.appendChild(el("code",c.matched_text)); b.appendChild(m); }
+  const q=el("blockquote",null,"quote"); q.appendChild(el("span",c.origin==="registry"?"Note on this record":"Supporting quote","ql"));
+  q.appendChild(document.createTextNode(c.origin==="registry"?(c.quote||"—"):"“"+(c.quote||"—")+"”")); b.appendChild(q);
+  const more=el("details",null,"more"); more.appendChild(el("summary","Why this was extracted"));
+  more.appendChild(el("p",c.why_relevant)); more.appendChild(el("p",c.extraction)); b.appendChild(more);
+  return b;
+}
+// a decision control: a native radio (keyboard + screen-reader semantics) drawn as a button
+function actRadio(p,d,value,face,vh,cls){
+  const on=value.startsWith("cand:")?(d.action==="accept"&&d.candidate_id===value.slice(5)):d.action===value;
+  const w=el("label",null,"act "+(cls||"")), i=el("input"); i.type="radio"; i.name="dec-"+p.id; i.value=value; i.checked=on;
+  i.addEventListener("change",()=>{ if(!i.checked) return;
+    if(value.startsWith("cand:")){d.action="accept"; d.candidate_id=value.slice(5);} else {d.action=value; d.candidate_id=null;}
+    refreshParam(p,value); });
+  w.appendChild(i); w.appendChild(el("span",face,"face")); w.appendChild(el("span"," ("+vh+")","vh")); return w;
+}
+function overrideEl(p,d){
+  const o=el("div",null,"override");
+  const left=el("div"); left.appendChild(el("span","Researched value","tag"));
+  if(p.candidates.length) p.candidates.forEach(c=>{const v=el("div",modelVal(p,c),"val"); left.appendChild(v); left.appendChild(el("div",p.unit+" · "+c.source.title.slice(0,70),"vu"));});
+  else { left.appendChild(el("div","none researched","val")); left.lastChild.style.fontSize="1.05rem"; }
+  const right=el("div",null,"u-h"); right.appendChild(el("span","User override","tag"));
+  const mk=(key,lab,type,cls)=>{const id="ov-"+p.id+"-"+key, g=el("div"); const l=el("label",lab); l.htmlFor=id; const i=el("input"); i.id=id; i.type=type||"number"; i.step="any"; i.value=d[key]; if(cls) i.className=cls;
+    i.addEventListener("input",()=>{d[key]=i.value; renderSummary();}); g.appendChild(l); g.appendChild(i); return [g,i];};
+  const [gv]=mk("value","Your value ("+p.unit+")"); right.appendChild(gv);
+  const rg=el("div",null,"rg"); rg.appendChild(mk("low","Range low (optional)")[0]); rg.appendChild(mk("high","Range high (optional)")[0]); right.appendChild(rg);
+  const [gn,ni]=mk("note","Note (optional)","text","wide"); ni.maxLength=300; right.appendChild(gn);
+  o.appendChild(left); o.appendChild(right);
+  const wrap=el("div"); wrap.appendChild(o); wrap.appendChild(el("p","Your value will be recorded as YOUR ASSUMPTION, not as sourced evidence.","assume")); return wrap;
+}
+function paramEl(p){
+  const d=S.dec[p.id], conflict=(p.status==="conflicting"&&p.candidates.length>=2);
+  const sec=h("section","param"); sec.dataset.param=p.id; sec.setAttribute("role","radiogroup"); sec.setAttribute("aria-labelledby","pt-"+p.id);
+  const head=h("div","param-h"), tt=h("div","ptitle", el("span",p.id,"pid"), el("span",p.label,"plabel"), el("span",p.unit,"punit"));
+  tt.id="pt-"+p.id; head.appendChild(tt);
+  if(d.action==="override") head.appendChild(chip("USER OVERRIDE","override"));
+  else if(["multiple_sources","not_researched","search_failed"].includes(p.status)) head.appendChild(chip(STATUS_LABEL[p.status],p.status==="multiple_sources"?"sourced":"insufficient"));
+  sec.appendChild(head);
+  if(p.message && p.status!=="missing") sec.appendChild(el("p",p.message,"pmsg"));
+
+  if(conflict){
+    const c=h("div","conflict", el("span","CONFLICTING EVIDENCE","tag"), el("p","Sources disagree. Neither source has been silently selected: you choose."));
+    const cmp=h("div","cmp");
+    p.candidates.forEach((cd,i)=>{
+      const L=String.fromCharCode(65+i), s=h("div","side");
+      s.appendChild(el("span","Source "+L,"sl")); s.appendChild(el("div",modelVal(p,cd),"val")); s.appendChild(el("span",p.unit,"vu")); s.appendChild(candChip(cd));
+      sideNotes(p,cd).forEach(n=>s.appendChild(el("p",n,"stated"))); s.appendChild(sourceBlock(cd));
+      s.appendChild(h("div","choose", actRadio(p,d,"cand:"+cd.candidate_id,"Choose "+L,"Use this source")));
+      cmp.appendChild(s); });
+    c.appendChild(cmp); sec.appendChild(c);
+  } else if(p.candidates.length){
+    p.candidates.forEach(cd=>{
+      const row=h("div","cand"), vs=h("div","vside");
+      vs.appendChild(el("span",modelVal(p,cd),"val")); vs.appendChild(el("span",p.unit,"vu")); vs.appendChild(candChip(cd));
+      vs.appendChild(el("span",cd.origin==="registry"?"pinned local dataset record":"web search result — citation not checked","src-m"));
+      sideNotes(p,cd).forEach(n=>vs.appendChild(el("span",n,"stated")));
+      const body=h("div",null, sourceBlock(cd), h("div","choose", actRadio(p,d,"cand:"+cd.candidate_id,"Accept","Use this "+(p.status==="conflicting"?"source":"value"))));
+      row.appendChild(vs); row.appendChild(body); sec.appendChild(row); });
+  } else {
+    const box=h("div","insuff");
+    if(p.status==="missing"){
+      box.appendChild(el("span","EVIDENCE INSUFFICIENT","tag"));
+      box.appendChild(el("p","Evidence insufficient — no reliable source found."));
+      box.appendChild(el("p","This is a valid scientific state, not a system failure. No number is invented.","muted small"));
+    } else { box.appendChild(el("span",STATUS_LABEL[p.status]||p.status,"tag")); box.appendChild(el("p","No evidence: "+p.message)); }
+    sec.appendChild(box);
+  }
+
+  const opts=h("div","opts"); opts.appendChild(el("span","Other options","lab"));
+  opts.appendChild(actRadio(p,d,"override", conflict?"Enter override":(p.candidates.length?"Edit":"Enter own value"), "Override with my own value","ink"));
+  if(p.illustrative_default) opts.appendChild(actRadio(p,d,"illustrative","Use illustrative default","the engine’s own placeholder","illus"));
+  opts.appendChild(actRadio(p,d,"unavailable","Mark unavailable","blocks the run"));
+  sec.appendChild(opts);
+  if(p.illustrative_default){ const il=p.illustrative_default, n=el("p",null,"illus-note");
+    n.appendChild(document.createTextNode("Illustrative default: ")); n.appendChild(el("span",fmt(il.value)+" "+il.unit+(il.interval?(" (range "+fmt(il.interval[0])+" – "+fmt(il.interval[1])+")"):""),"mono"));
+    n.appendChild(document.createTextNode(". "+il.note)); sec.appendChild(n); }
+  if(d.action==="override") sec.appendChild(overrideEl(p,d));
+  return sec;
+}
+function refreshParam(p,focusValue){
+  const old=[...document.querySelectorAll("#review .param")].find(x=>x.dataset.param===p.id), nu=paramEl(p);
+  if(old) old.replaceWith(nu);
+  const f=[...nu.querySelectorAll("input[type=radio]")].find(i=>i.value===focusValue); if(f) f.focus({preventScroll:true});
+  renderSummary();
+}
+function renderReview(){
+  const r=S.report, sc=r.scope;
+  clear("scope"); const sb=$("scope");
+  sb.appendChild(dl([["Question",r.question],["Model",r.model_ref+" (the existing EcoBackfire engine)"],
+    ["Geography / period",sc.geography_label+" ("+sc.geography_code+") / "+sc.period+(sc.geography_recognised?"":"  — no country recognised in the question; world scope")],
+    ["Web research", r.web_research.available? ("performed via "+r.web_research.provider) : ("NOT performed — "+r.web_research.message)]],"meta"));
+  if(!r.model_fit.ok) note(sb,"caution",r.model_fit.note); else sb.appendChild(el("p",r.model_fit.note,"muted small"));
+  if(!r.web_research.available) note(sb,"error","Web research is unavailable, so nothing was searched. Only local registry evidence (if any) is shown below; every other parameter has no proposed value.");
+  clear("review"); r.parameters.forEach(p=>$("review").appendChild(paramEl(p)));
+  renderSummary();
+}
+
+// ---- what the user has decided (client-side view of the request; the SERVER re-validates everything)
+function resolved(p){
+  const d=S.dec[p.id], out={id:p.id, unit:p.unit, block:null};
+  if(!d.action){ out.block=(p.status==="conflicting"?"Choose a source for "+p.id+" (conflicting evidence)":"Decide how to treat "+p.id); return out; }
+  if(d.action==="unavailable"){ out.block=p.id+" is marked unavailable: pick another option (no value is invented)"; return out; }
+  if(d.action==="accept"){ const c=p.candidates.find(x=>x.candidate_id===d.candidate_id); out.value=stated(c)+" "+c.unit; out.basis=c.origin==="registry"?"registry sourced":"web sourced (unreviewed)";
+    out.source=c.source; out.status=p.status; out.override="—"; return out; }
+  if(d.action==="illustrative"){ const il=p.illustrative_default; out.value=fmt(il.value)+" "+il.unit; out.basis="ILLUSTRATIVE (not evidence)"; out.status="illustrative"; out.override="—"; return out; }
+  if(d.action==="override"){
+    const v=parseFloat(d.value); if(!isFinite(v)){ out.block=p.id+": enter a numeric override value"; return out; }
+    out.value=fmt(v)+" "+p.unit+((d.low!==""&&d.high!=="")?(" (range "+d.low+" – "+d.high+")"):""); out.basis="USER OVERRIDE (your assumption)"; out.status="user_override";
+    const was=p.candidates.length? (stated(p.candidates[0])+" "+p.candidates[0].unit): "none researched"; out.override="Original researched value: "+was+" → User override: "+fmt(v)+" "+p.unit; return out; }
+  return out;
+}
+function renderSummary(){
+  const r=S.report; clear("summary","blockers");
+  const rows=r.parameters.map(resolved); const blocks=rows.filter(x=>x.block).map(x=>x.block);
+  const sourced=rows.filter(x=>x.basis&&/sourced/.test(x.basis)).length, ovr=rows.filter(x=>x.status==="user_override").length, ill=rows.filter(x=>x.status==="illustrative").length;
+  const reviewed=rows.length-blocks.length;
+  if(!blocks.length && sourced===0) blocks.push("At least one parameter must come from a researched or registry source: the engine requires documented evidence to challenge its candidates with, and will not run on overrides and illustrative defaults alone.");
+  const S_=$("summary"), ready=!blocks.length;
+  S_.appendChild(h("div","ready-h", el("span",ready?"READY TO RUN":"NOT READY TO RUN","tag "+(ready?"accent":"caution")), ready?null:el("span",blocks.length+" thing"+(blocks.length===1?"":"s")+" to resolve","muted small")));
+  const st=el("ul",null,"stats"); [[reviewed+" of "+rows.length,"inputs reviewed"],[sourced,"sourced"],[ovr,"user override"+(ovr===1?"":"s")],[ill,"illustrative assumption"+(ill===1?"":"s")]]
+    .forEach(([n,l])=>{const li=el("li"); li.appendChild(el("b",n)); li.appendChild(document.createTextNode(l)); st.appendChild(li);}); S_.appendChild(st);
+  S_.appendChild(tbl(["Parameter","Final value","Basis","Evidence status","Source","Override"],
+    rows.map(x=>[x.id, x.value||"—", x.basis||"—", x.status||"—", x.source? x.source.title : "—", x.override||"—"])));
+  S_.appendChild(dl([["Question",r.question],["Model",r.model_ref],["Scope",r.scope.geography_label+" / "+r.scope.period],
+    ["Evidence status counts", ["sourced","sourced_range","multiple_sources","conflicting","missing","not_researched","search_failed"].map(k=>[k,r.parameters.filter(p=>p.status===k).length]).filter(x=>x[1]).map(x=>x[0]+": "+x[1]).join(", ")||"—"],
+    ["User overrides", rows.filter(x=>x.status==="user_override").map(x=>x.id).join(", ")||"none"]],"meta"));
+  if(blocks.length){const b=note($("blockers"),"caution",""); b.appendChild(el("strong","Cannot run yet:")); const ul=el("ul"); blocks.forEach(x=>ul.appendChild(el("li",x))); b.appendChild(ul);}
+  $("confirm").disabled=blocks.length>0;
+}
+
+$("confirm").addEventListener("click",()=>{ setStep(4); $("confirmbox").hidden=false; $("confirmbox").scrollIntoView(); $("confirmbox").focus({preventScroll:true}); });
+$("no").addEventListener("click",()=>{ $("confirmbox").hidden=true; setStep(3); $("confirm").focus(); });
+
+function buildDecisions(){
+  return S.report.parameters.map(p=>{
+    const d=S.dec[p.id], o={parameter:p.id, action:d.action};
+    if(d.action==="accept") o.candidate_id=d.candidate_id;
+    if(d.action==="override"){ o.value=parseFloat(d.value); if(d.low!==""&&d.high!==""){o.low=parseFloat(d.low); o.high=parseFloat(d.high);} if(d.note) o.note=d.note; }
+    return o;
+  });
+}
+let timer=null;
+$("yes").addEventListener("click", async ()=>{
+  $("confirmbox").hidden=true; $("confirm").disabled=true; $("yes").disabled=true; setStep(5);
+  let n=0; $("elapsed").textContent="0"; timer=setInterval(()=>{n++; $("elapsed").textContent=String(n);},1000);
+  reveal($("running"),"h-run");
+  clear("rmsg");
+  try{
+    const d=await jfetch("/api/run-reviewed",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({report:S.report, signature:S.signature, decisions:buildDecisions(), confirm:true})});
+    renderProvenance(d);
+    render(d, n=>"/api/runs/"+encodeURIComponent(d.run_key)+"/artifacts/"+encodeURIComponent(n));
+    $("prov-wrap").hidden=false; setStep(6); reveal($("out"),"h-results");
+  }catch(e){
+    const b=note($("rmsg"),"error",""); b.appendChild(el("strong","The run did not start or did not finish: "));
+    if(e.data&&e.data.blocked){ const ul=el("ul"); e.data.messages.forEach(m=>ul.appendChild(el("li",m))); b.appendChild(ul);} else b.appendChild(document.createTextNode(e.message));
+    setStep(3); $("rmsg").scrollIntoView();
+  }finally{ clearInterval(timer); $("running").hidden=true; $("yes").disabled=false; renderSummary(); }
+});
+
+const BASIS_LABEL={web_sourced:"web sourced (sourced_unreviewed)",registry_sourced:"registry sourced",user_override:"USER OVERRIDE (assumption, not evidence)",illustrative_default:"ILLUSTRATIVE (not evidence)"};
+const BASIS_KIND={web_sourced:"sourced",registry_sourced:"sourced",user_override:"override",illustrative_default:"illus"};
+function rangeOrVal(x){ return x.range?(fmt(x.range[0])+" – "+fmt(x.range[1])):fmt(x.value); }
+function renderProvenance(d){
+  const P=$("prov"); P.replaceChildren(); const wr=d.web_review;
+  P.appendChild(el("p","What value did the system use? Where did it come from? Was it a range? Was there conflicting evidence? Did you override it?","muted small"));
+  wr.parameters.forEach(o=>{
+    const eng=wr.engine_inputs.find(x=>x.parameter===o.parameter), a=el("article",null,"pv");
+    a.appendChild(h("div","pv-h", el("span",o.parameter,"pid"), el("span",fmt(o.used_value)+(o.used_range?(" (range "+fmt(o.used_range[0])+" – "+fmt(o.used_range[1])+")"):"")+" "+o.unit,"cv"), chip(BASIS_LABEL[o.basis]||o.basis, BASIS_KIND[o.basis]||"")));
+    const src=el("div");
+    if((o.sources||[]).length){ const ul=el("ul",null,"plain"); o.sources.forEach(s=>{const li=el("li"); li.appendChild(safeLink(s.url,s.title)); if(s.quote) li.appendChild(el("blockquote","“"+s.quote+"”","quote")); ul.appendChild(li);}); src.appendChild(ul); }
+    else src.textContent=o.basis==="user_override"?"none — your own assumption":(o.basis==="illustrative_default"?"none — illustrative placeholder":"—");
+    const alts=el("div"); (o.alternatives||[]).forEach(x=>{const line=el("div"); line.appendChild(document.createTextNode(rangeOrVal(x)+" "+x.unit+" — ")); line.appendChild(safeLink(x.source_url,x.source_title)); alts.appendChild(line);});
+    if(!(o.alternatives||[]).length) alts.textContent="—";
+    a.appendChild(dl([["Source",src],["Researched status",o.researched_status],["Other researched candidates (kept visible)",alts],["Engine’s own role for this input",eng?(eng.engine_role+" — "+eng.engine_detail):"—"]]));
+    if(o.user_override){ const u=o.user_override;
+      const was=(u.researched||[]).length? u.researched.map(c=>rangeOrVal(c)+" "+c.unit).join("; ") : "none researched";
+      const pair=el("div",null,"override"), l=el("div"), r=el("div",null,"u-h");
+      l.appendChild(el("span","Researched value","tag")); l.appendChild(el("div",was,"val")); l.lastChild.style.fontSize="1.05rem";
+      r.appendChild(el("span","User override","tag")); r.appendChild(el("div",fmt(u.override_value),"val")); r.appendChild(el("div",o.unit+(u.user_note?(" · "+u.user_note):""),"vu"));
+      pair.appendChild(l); pair.appendChild(r); a.appendChild(pair); a.appendChild(el("p","Your value is recorded as YOUR ASSUMPTION, not as sourced evidence.","assume")); }
+    P.appendChild(a);
+  });
+  if((wr.search_range_notes||[]).length){const b=note(P,"caution",""); b.appendChild(el("strong","Search ranges")); const ul=el("ul"); wr.search_range_notes.forEach(x=>ul.appendChild(el("li",x))); b.appendChild(ul);}
+  if((wr.engine_consistency_mismatches||[]).length){const b=note(P,"error",""); b.appendChild(el("strong","Web layer / engine disagreement (please report):")); const ul=el("ul"); wr.engine_consistency_mismatches.forEach(x=>ul.appendChild(el("li",x))); b.appendChild(ul);}
+  note(P,"","The engine’s own provenance is in mission.json, plan.json and mission_result.json; the web review log (what was researched, what you decided) is parameter_review.json. Re-run check: "+wr.reproduce_command);
+}
+</script>
+</body>
+</html>

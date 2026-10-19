@@ -1,0 +1,83 @@
+# e3_breakeven_f: ALL INPUT VALUES ARE ILLUSTRATIVE — not evidence (see e2_breakeven_eps.toml).
+schema_version = "1.0.0"
+experiment_id = "e3_breakeven_f"
+title = "E3: break-even emissions factor of delivered energy (illustrative inputs)"
+research_question = """At what emissions factor of delivered energy does the efficient device stop paying back its embodied emissions, for a fixed demand response?"""
+model_ref = "efficiency_rebound@1.0.0"
+kind = "breakeven"
+decision_metric_ref = "delta_emissions_beneficial"
+
+[options]
+boundary_variant = "B1"
+demand_form = "constant_elasticity"
+
+[search]
+variable_id = "f"
+low = 0.0
+high = 1.2
+grid_points = 241
+xtol = 1e-12
+
+[bindings.E0]
+value = 3000.0
+unit = "kWh/yr"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 2000.0, high = 4500.0 }
+
+[bindings.eta]
+value = 0.30
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 0.2, high = 0.4 }
+
+[bindings.phi]
+value = 0.80
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 0.5, high = 1.0 }
+
+[bindings.epsilon]
+value = 0.5
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 0.0, high = 1.5 }
+
+[bindings.f]
+value = 0.40
+unit = "kgCO2e/kWh"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 0.1, high = 0.8 }
+
+[bindings.EM0]
+value = 1000.0
+unit = "kgCO2e"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 500.0, high = 1500.0 }
+
+[bindings.EM1]
+value = 1720.0
+unit = "kgCO2e"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 1000.0, high = 2500.0 }
+
+[bindings.L]
+value = 12.0
+unit = "yr"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 8.0, high = 16.0 }
+
+# s_max is used only by the alternative saturating demand form (falsification test F3).
+[bindings.s_max]
+value = 1.5
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 1.05, high = 3.0 }

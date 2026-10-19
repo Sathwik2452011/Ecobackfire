@@ -1,0 +1,86 @@
+# Evidence-resolution example (Step 2): E2's break-even search over demand elasticity, but the emissions factor `f`
+# is NOT written here. It is requested from the dataset registry (OWID/Ember grid carbon intensity, India, 2024).
+# Every OTHER input below is still an ILLUSTRATIVE placeholder, so the result is conditional on eight non-evidence
+# inputs and says nothing about a real device. The experiment id differs from E2 on purpose.
+
+schema_version = "1.0.0"
+experiment_id = "e2_eps_with_evidence_f"
+title = "E2 variant: break-even demand elasticity, emissions factor f resolved from the dataset registry (India 2024); all other inputs illustrative"
+research_question = """For an energy-efficiency improvement that lowers energy use per unit of service, under what demand elasticity does the intervention stop reducing absolute annual emissions, once annualized embodied emissions are counted?"""
+model_ref = "efficiency_rebound@1.0.0"
+kind = "breakeven"
+decision_metric_ref = "delta_emissions_beneficial"
+
+[options]
+boundary_variant = "B1"
+demand_form = "constant_elasticity"
+
+[search]
+variable_id = "epsilon"
+low = 0.0
+high = 3.0
+grid_points = 301
+xtol = 1e-12
+
+[bindings.E0]
+value = 3000.0
+unit = "kWh/yr"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 2000.0, high = 4500.0 }
+
+[bindings.eta]
+value = 0.30
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 0.2, high = 0.4 }
+
+[bindings.phi]
+value = 0.80
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 0.5, high = 1.0 }
+
+[bindings.epsilon]
+value = 0.5
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 0.0, high = 1.5 }
+
+[evidence_requests.f]
+dataset_id = "owid-electricity-carbon-intensity"
+version = "1.0.0"
+geography = "IN"
+period = "2024"
+
+[bindings.EM0]
+value = 1000.0
+unit = "kgCO2e"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 500.0, high = 1500.0 }
+
+[bindings.EM1]
+value = 1720.0
+unit = "kgCO2e"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 1000.0, high = 2500.0 }
+
+[bindings.L]
+value = 12.0
+unit = "yr"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 8.0, high = 16.0 }
+
+# s_max is used only by the alternative saturating demand form (falsification test F3).
+[bindings.s_max]
+value = 1.5
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 1.05, high = 3.0 }

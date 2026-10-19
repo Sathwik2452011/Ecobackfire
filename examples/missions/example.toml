@@ -1,0 +1,162 @@
+# Canonical EcoBackfire research mission (core-orchestration milestone).
+#
+# One command runs the whole investigation machine on the existing efficiency-rebound model:
+#     ecobackfire mission examples/missions/example.toml
+#
+# EVIDENCE STATUS (honest): exactly ONE input is evidence-backed-capable: the grid emissions factor `f`
+# (OWID/Ember, India, 2024; sourced but UNREVIEWED, uncertainty unknown). EVERY OTHER input below is an
+# ILLUSTRATIVE placeholder, so the result is a model-derived, CONDITIONAL result about the model. It says nothing
+# about a real product, device or country. The mission acknowledges this explicitly (see the last key).
+
+schema_version = "1.0.0"
+mission_id = "m1_rebound_breakeven_india"
+title = "Mission M1: where does an efficiency gain stop reducing emissions? (rebound model; f from the registry, all else illustrative)"
+research_question = """For an energy-efficiency improvement that lowers energy use per unit of service, which single input - varied alone across a declared range, others held at base - flips the intervention from reducing to increasing absolute annual emissions once annualized embodied emissions are counted, and does that finding survive falsification and evidence challenges?"""
+intervention = "A more energy-efficient replacement device (higher efficiency eta, higher embodied emissions EM1) that triggers a direct rebound in service demand."
+scenario = "Direct rebound with constant-elasticity demand; system boundary B1 (use phase plus annualized embodied emissions); ILLUSTRATIVE device, India grid factor."
+model_ref = "efficiency_rebound@1.0.0"
+target_metric_ref = "delta_emissions_beneficial"
+target_environmental_metric = "Change in absolute annual greenhouse-gas emissions of the service (kgCO2e/yr), net of annualized embodied emissions"
+acknowledges_illustrative_inputs = true
+reproducibility_check = true
+
+[options]
+boundary_variant = "B1"
+demand_form = "constant_elasticity"
+
+[scope]
+geography = "IN"
+period = "2024"
+
+# --- evidence requirement: the ONLY real-data input ---------------------------------------------------------
+[evidence_requirements.f]
+dataset_id = "owid-electricity-carbon-intensity"
+version = "1.0.0"
+required = true
+note = "Average lifecycle grid carbon intensity per kWh generated (not delivered, not marginal); single year; no uncertainty in the source."
+
+# --- search bounds (explicit; the engine never invents a range) ------------------------------------------------
+[[search]]
+variable_id = "epsilon"
+low = 0.0
+high = 3.0
+provenance_class = "illustrative"
+basis = "ILLUSTRATIVE — not evidence: demonstration range for the demand elasticity"
+grid_points = 301
+
+[[search]]
+variable_id = "f"
+low = 0.01
+high = 1.0
+provenance_class = "illustrative"
+basis = "ILLUSTRATIVE — not evidence: demonstration range for the emissions factor"
+grid_points = 201
+
+[[search]]
+variable_id = "EM1"
+basis = "binding interval (illustrative)"
+grid_points = 201
+
+[[search]]
+variable_id = "L"
+basis = "binding interval (illustrative)"
+grid_points = 201
+
+[discovery]
+kind = "breakeven_scan"
+top_k = 3
+
+# --- automated backfire hunt: the mission does NOT name the break-even; the hunt finds it ---------------------
+# Searches every [[search]] parameter AND every other required input that has a documented interval, within an
+# explicit evaluation budget, for the region where the benefit disappears or reverses. Every crossing then goes
+# through falsification, robustness and evidence challenges (none is called a "backfire" for being a crossing).
+[backfire]
+max_evaluations = 20000
+auto_parameters = true
+default_grid_points = 201
+
+[falsification]
+edge_margin = 0.02
+range_expansion = 0.25
+repeats = 3
+perturbation_levels = [0.01, 0.05, 0.10]
+
+[robustness]
+edge_margin = 0.02
+repeats = 2
+agree_tol = 1e-8
+
+[[robustness.perturbations]]
+variable_id = "eta"
+half_width = 0.10
+n_evals = 5
+
+[[robustness.perturbations]]
+variable_id = "phi"
+half_width = 0.05
+n_evals = 5
+
+[budget]
+max_search_parameters = 12
+max_grid_points_per_parameter = 2001
+max_candidates = 10
+max_scenarios = 500
+max_model_evaluations = 5000000
+
+# --- inputs not supplied by evidence: ALL ILLUSTRATIVE -----------------------------------------------------------
+[bindings.E0]
+value = 3000.0
+unit = "kWh/yr"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 2000.0, high = 4500.0 }
+
+[bindings.eta]
+value = 0.30
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 0.2, high = 0.4 }
+
+[bindings.phi]
+value = 0.80
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 0.5, high = 1.0 }
+
+[bindings.epsilon]
+value = 0.5
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 0.0, high = 1.5 }
+
+[bindings.EM0]
+value = 1000.0
+unit = "kgCO2e"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 500.0, high = 1500.0 }
+
+[bindings.EM1]
+value = 1720.0
+unit = "kgCO2e"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 1000.0, high = 2500.0 }
+
+[bindings.L]
+value = 12.0
+unit = "yr"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 8.0, high = 16.0 }
+
+# s_max is used only by the alternative saturating demand form (not selected here); bound for the verification suite.
+[bindings.s_max]
+value = 1.5
+unit = "dimensionless"
+provenance_class = "illustrative"
+note = "ILLUSTRATIVE — not evidence"
+uncertainty = { kind = "interval", low = 1.05, high = 3.0 }

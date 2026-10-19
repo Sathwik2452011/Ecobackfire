@@ -1,0 +1,96 @@
+# Import spec: electricity carbon intensity (model variable `f`) from the Our World in Data energy dataset.
+#
+# REAL DATA. Every value comes from a pinned upstream file (see [[raw_files]] and the extraction script in
+# data/raw/owid-electricity-carbon-intensity/1.0.0/). The row selection below was fixed before any model was run and is
+# NOT tuned to any result: the world aggregate plus four large, climatically and structurally different grids,
+# one reference year (2024).
+#
+# Import:  ecobackfire datasets import data/imports/owid-electricity-carbon-intensity-1.0.0.toml
+
+[release]
+dataset_id = "owid-electricity-carbon-intensity"
+release_version = "1.0.0"
+title = "Lifecycle carbon intensity of electricity generation, 2024 (Our World in Data / Ember), 5 geographies"
+description = """Grid-average lifecycle greenhouse-gas intensity of electricity generation for the world and four countries in 2024, as published in the Our World in Data (OWID) 'Data on Energy' legacy dataset (variable carbon_intensity_elec). OWID's codebook attributes the variable to Ember's Yearly Electricity Data. Supplies the model input `f` only; it supplies nothing else the rebound model needs."""
+provider = "Our World in Data (compiler); underlying data: Ember (Yearly Electricity Data 2026; Yearly Electricity Data Europe 2026), as stated in the OWID codebook"
+methodology = """OWID codebook definition (verbatim from the pinned codebook row): 'Greenhouse gases emitted per unit of generated electricity, measured in grams of CO2 equivalents per kilowatt-hour.' Title: 'Lifecycle carbon intensity of electricity generation'. This is a grid-AVERAGE intensity per kWh GENERATED. EcoBackfire notes (not from the source): it is not a marginal factor, it is defined per generated rather than delivered kWh, and the source states no uncertainty. The rebound model's `f` is per kWh of final energy and requires the supplier to state average vs marginal."""
+license = { identifier = "CC-BY-4.0", url = "https://creativecommons.org/licenses/by/4.0/", text = "OWID states that data it produces is open access under Creative Commons BY and that data produced by third parties is subject to the original authors' license terms; the original (Ember) terms were not checked here." }
+last_updated = "2026-10-15"
+quality = "provisional"
+changelog = "Initial import: 5 records for variable f (World, India, United States, Germany, France; year 2024) from upstream commit f8de88a4f6f9cab44f1cf606047cbd6c4414042c."
+metadata = { upstream_repository = "https://github.com/owid/energy-data", upstream_commit = "f8de88a4f6f9cab44f1cf606047cbd6c4414042c", upstream_commit_date = "2026-10-01", upstream_data_file = "owid-energy-data.csv", upstream_data_file_sha256 = "266f2e2baad7975351bc9bb4aa061d22b1da9fe4c47d51d2ac6071e01e171f76", upstream_codebook_sha256 = "3cc9b7db0d921496e2988568ce3aee5ed41f50431dd234a0663b5f0a4b2e32bb", upstream_status = "OWID labels this legacy release as no longer updated", raw_excerpt_method = "verbatim header + selected lines; see data/raw/owid-electricity-carbon-intensity/1.0.0/extract_excerpt.py", row_selection_rule = "fixed list: World, India, United States, Germany, France; year 2024; chosen before any model run", uncertainty_in_source = "none provided" }
+
+[target]
+model_ref = "efficiency_rebound@1.0.0"
+
+[[raw_files]]
+key = "data"
+source_id = "owid-energy-data-csv@f8de88a"
+path = "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv"
+sha256 = "d5f62505e6c56074e990c028d83e4bd26c0cafb56d8f6e03de28e4023433b357"
+retrieved_on = "2026-10-15"
+note = "Verbatim lines (header + 5 data rows) of owid-energy-data.csv at upstream commit f8de88a4f6f9cab44f1cf606047cbd6c4414042c; full-file sha256 266f2e2baad7975351bc9bb4aa061d22b1da9fe4c47d51d2ac6071e01e171f76."
+
+[[raw_files]]
+key = "codebook"
+source_id = "owid-energy-codebook-csv@f8de88a"
+path = "owid-electricity-carbon-intensity/1.0.0/owid-energy-codebook.excerpt.csv"
+sha256 = "47c2d4a6fe3e0de2b8fccb5e287c4af48408dd5c12dd51ee0ab20661a233b9cb"
+retrieved_on = "2026-10-15"
+note = "Verbatim header + the carbon_intensity_elec row of owid-energy-codebook.csv at the same commit; full-file sha256 3cc9b7db0d921496e2988568ce3aee5ed41f50431dd234a0663b5f0a4b2e32bb."
+
+[source]
+source_id = "owid-energy-data@f8de88a"
+citation = "Our World in Data, 'Data on Energy' (legacy release), repository owid/energy-data, commit f8de88a4f6f9cab44f1cf606047cbd6c4414042c, file owid-energy-data.csv, column carbon_intensity_elec. Per the OWID codebook the underlying source is Ember, Yearly Electricity Data (2026) and Yearly Electricity Data Europe (2026), https://ember-energy.org/data/yearly-electricity-data/."
+url = "https://github.com/owid/energy-data/tree/f8de88a4f6f9cab44f1cf606047cbd6c4414042c"
+retrieved_on = "2026-10-15"
+
+[table]
+file = "data"
+label_column = "country"
+period_column = "year"
+iso3_column = "iso_code"
+
+[codebook]
+file = "codebook"
+key_column = "column"
+unit_column = "unit"
+
+[[variables]]
+column = "carbon_intensity_elec"
+variable_id = "f"
+unit = "gCO2e/kWh"
+codebook_unit_text = "grams of CO₂ equivalents per kilowatt-hour (gCO₂)"
+description = "Lifecycle greenhouse-gas intensity of electricity generation (grid average), per kWh generated"
+system_description = "grid-average electricity generation; average (not marginal); applies only to electricity-consuming devices"
+note = "EcoBackfire applicability caveat (not from the source): the source defines this per kWh generated, whereas the model's f is per kWh of final energy delivered, so transmission and distribution losses are not represented; the source gives no uncertainty."
+
+[[select]]
+where = { country = "World", year = "2024" }
+geography_code = "GLOBAL"
+geography_label = "World"
+source_iso3 = ""
+
+[[select]]
+where = { country = "India", year = "2024" }
+geography_code = "IN"
+geography_label = "India"
+source_iso3 = "IND"
+
+[[select]]
+where = { country = "United States", year = "2024" }
+geography_code = "US"
+geography_label = "United States"
+source_iso3 = "USA"
+
+[[select]]
+where = { country = "Germany", year = "2024" }
+geography_code = "DE"
+geography_label = "Germany"
+source_iso3 = "DEU"
+
+[[select]]
+where = { country = "France", year = "2024" }
+geography_code = "FR"
+geography_label = "France"
+source_iso3 = "FRA"

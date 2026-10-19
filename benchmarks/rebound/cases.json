@@ -1,0 +1,419 @@
+{
+  "benchmark_set": "rebound",
+  "schema_version": "1.0.0",
+  "note": "Known-answer cases for efficiency_rebound@1.0.0. 'exact analytical' and 'hand calculation' values do not depend on any code in this repository; 'closed form' values are evaluations of the formula in docs/first-experiment.md 3.3, which is itself cross-checked against numeric root finding. These cases verify the implementation; they do not validate the model against reality.",
+  "units": "canonical: E0 kWh/yr, f kgCO2e/kWh, EM kgCO2e, L yr, others dimensionless",
+  "cases": [
+    {
+      "id": "B-001",
+      "kind": "breakeven",
+      "description": "r=0, phi=1: classical backfire threshold, eps*=1 for any eta",
+      "provenance": "exact analytical result (eps*=ln(1-eta)/ln(1-eta)=1)",
+      "options": {
+        "boundary_variant": "B1",
+        "demand_form": "constant_elasticity"
+      },
+      "inputs": {
+        "E0": 1000.0,
+        "f": 0.5,
+        "L": 10.0,
+        "EM0": 0.0,
+        "EM1": 0.0,
+        "eta": 0.2,
+        "phi": 1.0,
+        "epsilon": 0.0,
+        "s_max": 1.5
+      },
+      "search": {
+        "variable_id": "epsilon",
+        "low": 0.0,
+        "high": 6.0,
+        "grid_points": 601,
+        "xtol": 1e-12
+      },
+      "expected": {
+        "classification": "crossing",
+        "roots": [
+          1.0
+        ]
+      },
+      "rtol": 1e-09
+    },
+    {
+      "id": "B-002",
+      "kind": "breakeven",
+      "description": "r=0, phi=1, eta=0.5",
+      "provenance": "exact analytical result (eps*=1)",
+      "options": {
+        "boundary_variant": "B1",
+        "demand_form": "constant_elasticity"
+      },
+      "inputs": {
+        "E0": 1000.0,
+        "f": 0.5,
+        "L": 10.0,
+        "EM0": 0.0,
+        "EM1": 0.0,
+        "eta": 0.5,
+        "phi": 1.0,
+        "epsilon": 0.0,
+        "s_max": 1.5
+      },
+      "search": {
+        "variable_id": "epsilon",
+        "low": 0.0,
+        "high": 6.0,
+        "grid_points": 601,
+        "xtol": 1e-12
+      },
+      "expected": {
+        "classification": "crossing",
+        "roots": [
+          1.0
+        ]
+      },
+      "rtol": 1e-09
+    },
+    {
+      "id": "B-003",
+      "kind": "breakeven",
+      "description": "r=0, phi=0.5, eta=0.2: eps* = ln(0.8)/ln(0.9)",
+      "provenance": "closed form, docs/first-experiment.md 3.3",
+      "options": {
+        "boundary_variant": "B1",
+        "demand_form": "constant_elasticity"
+      },
+      "inputs": {
+        "E0": 1000.0,
+        "f": 0.5,
+        "L": 10.0,
+        "EM0": 0.0,
+        "EM1": 0.0,
+        "eta": 0.2,
+        "phi": 0.5,
+        "epsilon": 0.0,
+        "s_max": 1.5
+      },
+      "search": {
+        "variable_id": "epsilon",
+        "low": 0.0,
+        "high": 6.0,
+        "grid_points": 601,
+        "xtol": 1e-12
+      },
+      "expected": {
+        "classification": "crossing",
+        "roots": [
+          2.117904889901081
+        ]
+      },
+      "rtol": 1e-09
+    },
+    {
+      "id": "B-004",
+      "kind": "breakeven",
+      "description": "eta=0.3, phi=0.8, r=0.05 (EM1=250 kgCO2e, L f E0 = 5000)",
+      "provenance": "closed form, docs/first-experiment.md 3.3",
+      "options": {
+        "boundary_variant": "B1",
+        "demand_form": "constant_elasticity"
+      },
+      "inputs": {
+        "E0": 1000.0,
+        "f": 0.5,
+        "L": 10.0,
+        "EM0": 0.0,
+        "EM1": 250.0,
+        "eta": 0.3,
+        "phi": 0.8,
+        "epsilon": 0.0,
+        "s_max": 1.5
+      },
+      "search": {
+        "variable_id": "epsilon",
+        "low": 0.0,
+        "high": 6.0,
+        "grid_points": 601,
+        "xtol": 1e-12
+      },
+      "expected": {
+        "classification": "crossing",
+        "roots": [
+          1.1127574680079595
+        ]
+      },
+      "rtol": 1e-09
+    },
+    {
+      "id": "B-005",
+      "kind": "breakeven",
+      "description": "eta=0.5, phi=1, r=0.1 (EM1=500)",
+      "provenance": "closed form, docs/first-experiment.md 3.3",
+      "options": {
+        "boundary_variant": "B1",
+        "demand_form": "constant_elasticity"
+      },
+      "inputs": {
+        "E0": 1000.0,
+        "f": 0.5,
+        "L": 10.0,
+        "EM0": 0.0,
+        "EM1": 500.0,
+        "eta": 0.5,
+        "phi": 1.0,
+        "epsilon": 0.0,
+        "s_max": 1.5
+      },
+      "search": {
+        "variable_id": "epsilon",
+        "low": 0.0,
+        "high": 6.0,
+        "grid_points": 601,
+        "xtol": 1e-12
+      },
+      "expected": {
+        "classification": "crossing",
+        "roots": [
+          0.8479969065549501
+        ]
+      },
+      "rtol": 1e-09
+    },
+    {
+      "id": "B-006",
+      "kind": "breakeven",
+      "description": "no crossing: r=0.2 > eta=0.1, intervention already non-beneficial at eps=0",
+      "provenance": "analytical: break-even exists iff r <= eta",
+      "options": {
+        "boundary_variant": "B1",
+        "demand_form": "constant_elasticity"
+      },
+      "inputs": {
+        "E0": 1000.0,
+        "f": 0.5,
+        "L": 10.0,
+        "EM0": 0.0,
+        "EM1": 1000.0,
+        "eta": 0.1,
+        "phi": 1.0,
+        "epsilon": 0.0,
+        "s_max": 1.5
+      },
+      "search": {
+        "variable_id": "epsilon",
+        "low": 0.0,
+        "high": 6.0,
+        "grid_points": 601,
+        "xtol": 1e-12
+      },
+      "expected": {
+        "classification": "no_crossing_never_beneficial",
+        "roots": []
+      },
+      "rtol": 1e-09
+    },
+    {
+      "id": "B-007",
+      "kind": "breakeven",
+      "description": "saturating demand, (1-eta)*s_max = 0.84 < 1 - r: beneficial for every eps",
+      "provenance": "analytical: reversal exists iff (1-eta)*s_max > 1-r",
+      "options": {
+        "boundary_variant": "B1",
+        "demand_form": "saturating"
+      },
+      "inputs": {
+        "E0": 1000.0,
+        "f": 0.5,
+        "L": 10.0,
+        "EM0": 0.0,
+        "EM1": 0.0,
+        "eta": 0.3,
+        "phi": 1.0,
+        "epsilon": 0.0,
+        "s_max": 1.2
+      },
+      "search": {
+        "variable_id": "epsilon",
+        "low": 0.0,
+        "high": 6.0,
+        "grid_points": 601,
+        "xtol": 1e-12
+      },
+      "expected": {
+        "classification": "no_crossing_always_beneficial",
+        "roots": []
+      },
+      "rtol": 1e-09
+    },
+    {
+      "id": "B-008",
+      "kind": "breakeven",
+      "description": "saturating demand, (1-eta)*s_max = 1.4 > 1: reversal persists, eps*=1 (phi=1, r=0)",
+      "provenance": "analytical",
+      "options": {
+        "boundary_variant": "B1",
+        "demand_form": "saturating"
+      },
+      "inputs": {
+        "E0": 1000.0,
+        "f": 0.5,
+        "L": 10.0,
+        "EM0": 0.0,
+        "EM1": 0.0,
+        "eta": 0.3,
+        "phi": 1.0,
+        "epsilon": 0.0,
+        "s_max": 2.0
+      },
+      "search": {
+        "variable_id": "epsilon",
+        "low": 0.0,
+        "high": 6.0,
+        "grid_points": 601,
+        "xtol": 1e-12
+      },
+      "expected": {
+        "classification": "crossing",
+        "roots": [
+          1.0
+        ]
+      },
+      "rtol": 1e-09
+    },
+    {
+      "id": "P-001",
+      "kind": "evaluate",
+      "description": "eta=0: nothing changes in energy; dC = (EM1-EM0)/L = 50",
+      "provenance": "hand calculation: (800-300)/10",
+      "options": {
+        "boundary_variant": "B1",
+        "demand_form": "constant_elasticity"
+      },
+      "inputs": {
+        "E0": 1000.0,
+        "f": 0.5,
+        "L": 10.0,
+        "EM0": 300.0,
+        "EM1": 800.0,
+        "eta": 0.0,
+        "phi": 0.5,
+        "epsilon": 0.7,
+        "s_max": 1.5
+      },
+      "expected": {
+        "E1": 1000.0,
+        "service_ratio": 1.0,
+        "dC": 50.0
+      },
+      "rtol": 1e-12,
+      "atol": 1e-09
+    },
+    {
+      "id": "P-002",
+      "kind": "evaluate",
+      "description": "eps=0, eta=0.25, no embodied emissions: E1=750, dC=0.5*(750-1000)=-125",
+      "provenance": "hand calculation",
+      "options": {
+        "boundary_variant": "B1",
+        "demand_form": "constant_elasticity"
+      },
+      "inputs": {
+        "E0": 1000.0,
+        "f": 0.5,
+        "L": 10.0,
+        "EM0": 0.0,
+        "EM1": 0.0,
+        "eta": 0.25,
+        "phi": 1.0,
+        "epsilon": 0.0,
+        "s_max": 1.5
+      },
+      "expected": {
+        "E1": 750.0,
+        "service_ratio": 1.0,
+        "dC": -125.0
+      },
+      "rtol": 1e-12,
+      "atol": 1e-09
+    },
+    {
+      "id": "P-003",
+      "kind": "evaluate",
+      "description": "phi=1, eps=1: S1/S0=1/(1-eta) so E1=E0 exactly (energy savings fully offset), dC=0",
+      "provenance": "hand calculation: (1-eta) * (1-eta)^-1 = 1",
+      "options": {
+        "boundary_variant": "B1",
+        "demand_form": "constant_elasticity"
+      },
+      "inputs": {
+        "E0": 1000.0,
+        "f": 0.5,
+        "L": 10.0,
+        "EM0": 0.0,
+        "EM1": 0.0,
+        "eta": 0.3,
+        "phi": 1.0,
+        "epsilon": 1.0,
+        "s_max": 1.5
+      },
+      "expected": {
+        "E1": 1000.0,
+        "dC": 0.0
+      },
+      "rtol": 1e-12,
+      "atol": 1e-09
+    },
+    {
+      "id": "P-004",
+      "kind": "evaluate",
+      "description": "B2 (old embodied sunk) vs B1: eta=0, EM0=300, EM1=800: B2 dC=800/10=80",
+      "provenance": "hand calculation",
+      "options": {
+        "boundary_variant": "B2",
+        "demand_form": "constant_elasticity"
+      },
+      "inputs": {
+        "E0": 1000.0,
+        "f": 0.5,
+        "L": 10.0,
+        "EM0": 300.0,
+        "EM1": 800.0,
+        "eta": 0.0,
+        "phi": 0.5,
+        "epsilon": 0.7,
+        "s_max": 1.5
+      },
+      "expected": {
+        "dC": 80.0
+      },
+      "rtol": 1e-12,
+      "atol": 1e-09
+    },
+    {
+      "id": "P-005",
+      "kind": "evaluate",
+      "description": "B3 (operational only): embodied emissions ignored, eta=0 => dC=0",
+      "provenance": "hand calculation",
+      "options": {
+        "boundary_variant": "B3",
+        "demand_form": "constant_elasticity"
+      },
+      "inputs": {
+        "E0": 1000.0,
+        "f": 0.5,
+        "L": 10.0,
+        "EM0": 300.0,
+        "EM1": 800.0,
+        "eta": 0.0,
+        "phi": 0.5,
+        "epsilon": 0.7,
+        "s_max": 1.5
+      },
+      "expected": {
+        "dC": 0.0
+      },
+      "rtol": 1e-12,
+      "atol": 1e-09
+    }
+  ]
+}

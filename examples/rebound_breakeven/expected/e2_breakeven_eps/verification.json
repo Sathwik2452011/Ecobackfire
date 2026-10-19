@@ -1,0 +1,310 @@
+{
+  "check_suite_version": "1.0.0",
+  "checks": [
+    {
+      "check_id": "V1_closed_form_vs_numeric",
+      "details": {
+        "closed_form_roots": [
+          1.1127574680079593
+        ],
+        "max_abs_diff": 6.661338147750939e-16,
+        "numeric_roots": [
+          1.11275746800796
+        ],
+        "variable": "epsilon"
+      },
+      "family": "closed_form",
+      "required": true,
+      "status": "passed",
+      "summary": "numeric break-even agrees with closed form",
+      "tolerance_used": "rtol=1e-09 (abs floor via max(1,|x|))"
+    },
+    {
+      "check_id": "V2_independent_decimal_recompute",
+      "details": {
+        "max_relative_error": 1.7789953539776526e-16,
+        "mismatches": []
+      },
+      "family": "independent_recomputation",
+      "required": true,
+      "status": "passed",
+      "summary": "production matches 60-digit Decimal reference (31 comparisons, 1 reference roots)",
+      "tolerance_used": "rtol=1e-09"
+    },
+    {
+      "check_id": "V3_invariants",
+      "details": {
+        "violations": []
+      },
+      "family": "invariants",
+      "required": true,
+      "status": "passed",
+      "summary": "all invariants hold",
+      "tolerance_used": "rtol 1e-12..1e-9"
+    },
+    {
+      "check_id": "V4_known_answer_benchmarks",
+      "details": {
+        "cases": [
+          "B-001",
+          "B-002",
+          "B-003",
+          "B-004",
+          "B-005",
+          "B-006",
+          "B-007",
+          "B-008",
+          "P-001",
+          "P-002",
+          "P-003",
+          "P-004",
+          "P-005"
+        ],
+        "failures": []
+      },
+      "family": "benchmarks",
+      "required": true,
+      "status": "passed",
+      "summary": "13 known-answer cases reproduced",
+      "tolerance_used": "per-case rtol (1e-9 roots, 1e-12 pointwise)"
+    },
+    {
+      "check_id": "F1_threshold_perturbation",
+      "details": {
+        "perturbations_rel": [
+          0.001,
+          1e-06
+        ],
+        "problems": []
+      },
+      "family": "falsification_perturbation",
+      "required": true,
+      "status": "passed",
+      "summary": "decision flips across each reported threshold (4 perturbed points)",
+      "tolerance_used": null
+    },
+    {
+      "check_id": "F2_counterexample_search",
+      "details": {
+        "missed_roots": [],
+        "sign_changes": [
+          [
+            1.11225,
+            1.11375
+          ]
+        ],
+        "unexplained": []
+      },
+      "family": "falsification_counterexample",
+      "required": true,
+      "status": "passed",
+      "summary": "dense independent sampling (2000 points) found no break-even outside the reported set",
+      "tolerance_used": "2000 points, offset grid"
+    },
+    {
+      "check_id": "F3_alternative_demand_form",
+      "details": {
+        "alternative": "saturating demand with s_max values (ILLUSTRATIVE placeholders) [1.05, 1.2, 1.5, 2.0, 3.0]",
+        "rows": [
+          {
+            "analytical_roots": [],
+            "reversal_found": false,
+            "roots": [],
+            "s_max": 1.05
+          },
+          {
+            "analytical_roots": [],
+            "reversal_found": false,
+            "roots": [],
+            "s_max": 1.2
+          },
+          {
+            "analytical_roots": [
+              1.1127574680079593
+            ],
+            "reversal_found": true,
+            "roots": [
+              1.11275746800796
+            ],
+            "s_max": 1.5
+          },
+          {
+            "analytical_roots": [
+              1.1127574680079593
+            ],
+            "reversal_found": true,
+            "roots": [
+              1.11275746800796
+            ],
+            "s_max": 2.0
+          },
+          {
+            "analytical_roots": [
+              1.1127574680079593
+            ],
+            "reversal_found": true,
+            "roots": [
+              1.11275746800796
+            ],
+            "s_max": 3.0
+          }
+        ],
+        "vanishes_for": [
+          1.05,
+          1.2
+        ]
+      },
+      "family": "model_form",
+      "required": true,
+      "status": "limits_claim",
+      "summary": "the reversal VANISHES under the alternative demand form for [1.05, 1.2]: the finding is conditional on the demand form",
+      "tolerance_used": null
+    },
+    {
+      "check_id": "F4_boundary_variation",
+      "details": {
+        "prediction_d": "eps*(B2) <= eps*(B1)",
+        "prediction_e": "eps*(B3) >= eps*(B1)",
+        "predictions_d_e_checked": true,
+        "roots_by_boundary": {
+          "B1": [
+            1.11275746800796
+          ],
+          "B2": [
+            0.8361584457767496
+          ],
+          "B3": [
+            1.2996612864671349
+          ]
+        }
+      },
+      "family": "boundary",
+      "required": true,
+      "status": "passed",
+      "summary": "a break-even exists under all three boundary variants; shifts match pre-registered predictions",
+      "tolerance_used": null
+    },
+    {
+      "check_id": "F5_parameter_uncertainty_corners",
+      "details": {
+        "corners_evaluated": 128,
+        "corners_with_reversal": 100,
+        "corners_without_reversal": 28,
+        "first_break_even_max": 2.9398458066429196,
+        "first_break_even_min": 0.23861103852308246,
+        "inputs_varied": [
+          "E0",
+          "eta",
+          "phi",
+          "f",
+          "EM0",
+          "EM1",
+          "L"
+        ],
+        "interval_values_are": "ILLUSTRATIVE placeholders (not evidence)",
+        "method_caveat": "corner enumeration bounds the response only if it is monotone in each input; it is not a proof of bounds"
+      },
+      "family": "parameter_uncertainty",
+      "required": true,
+      "status": "limits_claim",
+      "summary": "no break-even exists within the search range at 28 of 128 corners of the (illustrative) uncertainty box",
+      "tolerance_used": null
+    },
+    {
+      "check_id": "F6_extreme_and_invalid_inputs",
+      "details": {
+        "cases": [
+          "eta=0",
+          "eta->1",
+          "eta=1 (invalid)",
+          "eta<0 (invalid)",
+          "phi tiny",
+          "phi=0 (invalid)",
+          "phi>1 (invalid)",
+          "epsilon<0 (invalid)",
+          "epsilon=0",
+          "epsilon huge",
+          "L=0 (invalid)",
+          "L tiny",
+          "E0=0 (invalid)",
+          "E0 tiny",
+          "f=0",
+          "f<0 (invalid)",
+          "EM<0 (invalid)",
+          "NaN input",
+          "inf input"
+        ],
+        "problems": []
+      },
+      "family": "edge",
+      "required": true,
+      "status": "passed",
+      "summary": "19 extreme/invalid input cases behave as specified (finite result or typed error)",
+      "tolerance_used": null
+    },
+    {
+      "check_id": "F8_numerical_stability",
+      "details": {
+        "problems": [],
+        "range_extension": "range extended by 50% above"
+      },
+      "family": "stability",
+      "required": true,
+      "status": "passed",
+      "summary": "roots are stable under grid refinement, tighter tolerance, and range extension",
+      "tolerance_used": "rtol=1e-09"
+    },
+    {
+      "check_id": "F7_evidence_quality_gate",
+      "details": {
+        "illustrative_inputs": [
+          "E0",
+          "EM0",
+          "EM1",
+          "L",
+          "epsilon",
+          "eta",
+          "f",
+          "phi",
+          "s_max"
+        ],
+        "inputs_with_unknown_uncertainty": [],
+        "weakest_provenance": "illustrative"
+      },
+      "family": "evidence_gate",
+      "required": true,
+      "status": "limits_claim",
+      "summary": "inputs are illustrative and/or lack characterized uncertainty: the result demonstrates the method and cannot be a real-world conclusion",
+      "tolerance_used": null
+    }
+  ],
+  "claim": "Under system boundary B1 (operational + annualized embodied emissions; decision at end of life of the old device), demand form 'constant_elasticity', and the stated inputs (weakest provenance: illustrative), the intervention's decision metric changes sign at epsilon = 1.11275747 dimensionless: beneficial below and not beneficial above.",
+  "config_sha256": "ec25be888b1fb8fa3c7a7e787e4fec6c06603c563b8162a93ac67f596b7669fc",
+  "experiment_id": "e2_breakeven_eps",
+  "failed_attempts_to_falsify": [
+    "F1_threshold_perturbation: decision flips across each reported threshold (4 perturbed points)",
+    "F2_counterexample_search: dense independent sampling (2000 points) found no break-even outside the reported set",
+    "F4_boundary_variation: a break-even exists under all three boundary variants; shifts match pre-registered predictions",
+    "F6_extreme_and_invalid_inputs: 19 extreme/invalid input cases behave as specified (finite result or typed error)",
+    "F8_numerical_stability: roots are stable under grid refinement, tighter tolerance, and range extension"
+  ],
+  "label_justification": [
+    "rule 3: F3_alternative_demand_form (model_form) limits the claim: the reversal VANISHES under the alternative demand form for [1.05, 1.2]: the finding is conditional on the demand form",
+    "rule 3: F5_parameter_uncertainty_corners (parameter_uncertainty) limits the claim: no break-even exists within the search range at 28 of 128 corners of the (illustrative) uncertainty box",
+    "rule 3: F7_evidence_quality_gate (evidence_gate) limits the claim: inputs are illustrative and/or lack characterized uncertainty: the result demonstrates the method and cannot be a real-world conclusion"
+  ],
+  "profile": "breakeven_finding",
+  "recommended_label": "conditional",
+  "schema_version": "1.0.0",
+  "successful_falsifications": [
+    "F3_alternative_demand_form: the reversal VANISHES under the alternative demand form for [1.05, 1.2]: the finding is conditional on the demand form",
+    "F5_parameter_uncertainty_corners: no break-even exists within the search range at 28 of 128 corners of the (illustrative) uncertainty box",
+    "F7_evidence_quality_gate: inputs are illustrative and/or lack characterized uncertainty: the result demonstrates the method and cannot be a real-world conclusion"
+  ],
+  "unresolved_uncertainties": [
+    "Prior-art review has not been performed (prior_art_status = not_reviewed): no novelty claim is made.",
+    "Model-form adequacy against real data has not been assessed; constant-elasticity demand is an assumption.",
+    "Indirect/economy-wide rebound, grid dynamics, maintenance and end-of-life emissions are excluded.",
+    "Every input is an illustrative placeholder: no real-world evidence has been integrated."
+  ]
+}

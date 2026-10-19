@@ -1,0 +1,2 @@
+column,title,description,unit,source
+carbon_intensity_elec,Lifecycle carbon intensity of electricity generation,"Greenhouse gases emitted per unit of generated electricity, measured in grams of CO₂ equivalents per kilowatt-hour.",grams of CO₂ equivalents per kilowatt-hour (gCO₂),Ember - Yearly Electricity Data Europe (2026) [https://ember-energy.org/data/yearly-electricity-data/]; Ember - Yearly Electricity Data (2026) [https://ember-energy.org/data/yearly-electricity-data/]

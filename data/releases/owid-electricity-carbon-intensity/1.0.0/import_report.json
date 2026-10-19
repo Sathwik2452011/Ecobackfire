@@ -1,0 +1,92 @@
+{
+  "dataset_id": "owid-electricity-carbon-intensity",
+  "dataset_json_sha256": "231797b815c2d47c227e31fe17bf4fa4c51a48ca76cff0a36c90c72bfe61b025",
+  "import_spec_sha256": "358006a0352a10bf10d4c4cf26bf43768ba4abeea877cf7f58491104f3834c02",
+  "importer_version": "1",
+  "n_records": 5,
+  "raw_files": [
+    {
+      "bytes": 7530,
+      "key": "data",
+      "path": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv",
+      "sha256": "d5f62505e6c56074e990c028d83e4bd26c0cafb56d8f6e03de28e4023433b357"
+    },
+    {
+      "bytes": 486,
+      "key": "codebook",
+      "path": "owid-electricity-carbon-intensity/1.0.0/owid-energy-codebook.excerpt.csv",
+      "sha256": "47c2d4a6fe3e0de2b8fccb5e287c4af48408dd5c12dd51ee0ab20661a233b9cb"
+    }
+  ],
+  "records": [
+    {
+      "raw_file": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv",
+      "raw_line": 2,
+      "raw_row_sha256": "a6d6b7da2da166488f2eb38ac062881456f0c747edcf7e555619023349fb90a5",
+      "raw_value_text": "471.080",
+      "record_id": "f.global.2024",
+      "transformations": [
+        "none: value is the decimal text '471.080' parsed to float64; unit 'gCO2e/kWh' declared by EcoBackfire to match the source codebook text 'grams of CO₂ equivalents per kilowatt-hour (gCO₂)'; no scaling, rounding, unit conversion or imputation"
+      ],
+      "unit": "gCO2e/kWh",
+      "value": 471.08,
+      "variable_id": "f"
+    },
+    {
+      "raw_file": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv",
+      "raw_line": 3,
+      "raw_row_sha256": "0096f1c40e685688639dc1f89b58042ef089800ef51786c9b9d510091cac950c",
+      "raw_value_text": "705.400",
+      "record_id": "f.in.2024",
+      "transformations": [
+        "none: value is the decimal text '705.400' parsed to float64; unit 'gCO2e/kWh' declared by EcoBackfire to match the source codebook text 'grams of CO₂ equivalents per kilowatt-hour (gCO₂)'; no scaling, rounding, unit conversion or imputation"
+      ],
+      "unit": "gCO2e/kWh",
+      "value": 705.4,
+      "variable_id": "f"
+    },
+    {
+      "raw_file": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv",
+      "raw_line": 4,
+      "raw_row_sha256": "41e1d299367d91ff764088fb5a7586be348f640aa5675384aa7d964573f14629",
+      "raw_value_text": "383.780",
+      "record_id": "f.us.2024",
+      "transformations": [
+        "none: value is the decimal text '383.780' parsed to float64; unit 'gCO2e/kWh' declared by EcoBackfire to match the source codebook text 'grams of CO₂ equivalents per kilowatt-hour (gCO₂)'; no scaling, rounding, unit conversion or imputation"
+      ],
+      "unit": "gCO2e/kWh",
+      "value": 383.78,
+      "variable_id": "f"
+    },
+    {
+      "raw_file": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv",
+      "raw_line": 5,
+      "raw_row_sha256": "c59e6f84a7dc0812d465a4d04ef77f758b8222ddbaa0d12d6acddf7d74393ac0",
+      "raw_value_text": "336.380",
+      "record_id": "f.de.2024",
+      "transformations": [
+        "none: value is the decimal text '336.380' parsed to float64; unit 'gCO2e/kWh' declared by EcoBackfire to match the source codebook text 'grams of CO₂ equivalents per kilowatt-hour (gCO₂)'; no scaling, rounding, unit conversion or imputation"
+      ],
+      "unit": "gCO2e/kWh",
+      "value": 336.38,
+      "variable_id": "f"
+    },
+    {
+      "raw_file": "owid-electricity-carbon-intensity/1.0.0/owid-energy-data.excerpt.csv",
+      "raw_line": 6,
+      "raw_row_sha256": "1df3ea1ecd41178e51ee217b4ff3f91c149feaa928e1565b840ea591ba98f2d1",
+      "raw_value_text": "40.480",
+      "record_id": "f.fr.2024",
+      "transformations": [
+        "none: value is the decimal text '40.480' parsed to float64; unit 'gCO2e/kWh' declared by EcoBackfire to match the source codebook text 'grams of CO₂ equivalents per kilowatt-hour (gCO₂)'; no scaling, rounding, unit conversion or imputation"
+      ],
+      "unit": "gCO2e/kWh",
+      "value": 40.48,
+      "variable_id": "f"
+    }
+  ],
+  "release_content_sha256": "25a8c033f9a8246f22cd0b56ee3ddd4862a4aeaefb9093c0b565e9270c2729be",
+  "release_version": "1.0.0",
+  "target_model_ref": "efficiency_rebound@1.0.0",
+  "value_transformations": "none (see per-record 'transformations')"
+}

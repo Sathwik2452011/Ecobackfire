@@ -1,0 +1,12 @@
+.venv
+runs
+.hypothesis
+.pytest_cache
+.mypy_cache
+.ruff_cache
+__pycache__
+tests
+docs
+benchmarks
+PROJECT_STATUS*.md
+pyproject.toml
