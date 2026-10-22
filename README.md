@@ -327,6 +327,9 @@ Future development will focus on:
 The long-term goal is to make EcoBackfire a general research framework for discovering and rigorously testing **counterintuitive effects in real-world systems**.
 
 ---
+## 🤖 AI Disclosure
+
+AI tools were used during development to assist with coding, debugging, documentation, and UI development. The scientific model, analysis workflow, and project decisions were reviewed and validated by the team.
 
 ## 📌 Philosophy
 
